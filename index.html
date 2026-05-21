@@ -465,9 +465,11 @@ footer{text-align:center;color:var(--muted);font-size:0.73rem;padding:20px}
 .header-user .signout{font-size:0.72rem;opacity:0.5;margin-left:2px}
 
 /* ─── Appliance mini-cards ───────────────────────────────────── */
-.appliance-stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.appliance-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:900px){.appliance-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.appliance-stats{grid-template-columns:1fr}}
 .app-mini-card{
-  flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border);
+  background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;
   gap:12px;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s
 }
@@ -489,6 +491,18 @@ footer{text-align:center;color:var(--muted);font-size:0.73rem;padding:20px}
 .app-dry .app-mini-val{color:#8b949e}
 .app-hw .app-mini-val{color:var(--orange)}
 .app-hob .app-mini-val{color:#00acc1}
+.app-hv {box-shadow:inset 3px 0 0 rgba(171,71,188,0.5)}
+.app-fr {box-shadow:inset 3px 0 0 rgba(38,198,218,0.5)}
+.app-mat{box-shadow:inset 3px 0 0 rgba(141,110,99,0.5)}
+.app-ov {box-shadow:inset 3px 0 0 rgba(239,83,80,0.5)}
+.app-hv:hover {box-shadow:inset 3px 0 0 #ab47bc,  0 8px 24px rgba(171,71,188,0.2)}
+.app-fr:hover {box-shadow:inset 3px 0 0 #26c6da,  0 8px 24px rgba(38,198,218,0.2)}
+.app-mat:hover{box-shadow:inset 3px 0 0 #8d6e63,  0 8px 24px rgba(141,110,99,0.2)}
+.app-ov:hover {box-shadow:inset 3px 0 0 #ef5350,  0 8px 24px rgba(239,83,80,0.2)}
+.app-hv .app-mini-val{color:#ab47bc}
+.app-fr .app-mini-val{color:#26c6da}
+.app-mat .app-mini-val{color:#8d6e63}
+.app-ov .app-mini-val{color:#ef5350}
 
 /* ─── Quick date-range buttons ───────────────────────────────── */
 .quick-range-btns{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
@@ -517,6 +531,10 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 [data-appliance="dryer"].app-active{border-color:#2196f3;background:linear-gradient(135deg,rgba(33,150,243,0.08),transparent);box-shadow:inset 3px 0 0 #2196f3,0 0 16px rgba(33,150,243,0.25)}
 [data-appliance="hot_water"].app-active{border-color:#ff9800;background:linear-gradient(135deg,rgba(255,152,0,0.08),transparent);box-shadow:inset 3px 0 0 #ff9800,0 0 16px rgba(255,152,0,0.25)}
 [data-appliance="hob"].app-active{border-color:#00acc1;background:linear-gradient(135deg,rgba(0,172,193,0.08),transparent);box-shadow:inset 3px 0 0 #00acc1,0 0 16px rgba(0,172,193,0.25)}
+[data-appliance="hoover"].app-active{border-color:#ab47bc;background:linear-gradient(135deg,rgba(171,71,188,0.08),transparent);box-shadow:inset 3px 0 0 #ab47bc,0 0 16px rgba(171,71,188,0.25)}
+[data-appliance="fridge"].app-active{border-color:#26c6da;background:linear-gradient(135deg,rgba(38,198,218,0.08),transparent);box-shadow:inset 3px 0 0 #26c6da,0 0 16px rgba(38,198,218,0.25)}
+[data-appliance="mattress"].app-active{border-color:#8d6e63;background:linear-gradient(135deg,rgba(141,110,99,0.08),transparent);box-shadow:inset 3px 0 0 #8d6e63,0 0 16px rgba(141,110,99,0.25)}
+[data-appliance="oven"].app-active{border-color:#ef5350;background:linear-gradient(135deg,rgba(239,83,80,0.08),transparent);box-shadow:inset 3px 0 0 #ef5350,0 0 16px rgba(239,83,80,0.25)}
 /* ── Department badges & column ── */
 .col-dept{text-align:center;padding:8px 6px}
 .col-dept-th{white-space:nowrap;text-align:center}
@@ -642,7 +660,11 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <label class="ms-opt"><input type="checkbox" value="washing_machine" onchange="applyFilters()"> Washing Machine</label>
         <label class="ms-opt"><input type="checkbox" value="dryer" onchange="applyFilters()"> Dryer</label>
         <label class="ms-opt"><input type="checkbox" value="hot_water" onchange="applyFilters()"> Hot Water</label>
-        <label class="ms-opt"><input type="checkbox" value="hob" onchange="applyFilters()"> Hob</label>
+        <label class="ms-opt"><input type="checkbox" value="hob"      onchange="applyFilters()"> Hob</label>
+        <label class="ms-opt"><input type="checkbox" value="hoover"   onchange="applyFilters()"> Hoover</label>
+        <label class="ms-opt"><input type="checkbox" value="fridge"   onchange="applyFilters()"> Fridge</label>
+        <label class="ms-opt"><input type="checkbox" value="mattress" onchange="applyFilters()"> Mattress</label>
+        <label class="ms-opt"><input type="checkbox" value="oven"     onchange="applyFilters()"> Oven</label>
         <label class="ms-opt"><input type="checkbox" value="other" onchange="applyFilters()"> Other</label>
       </div>
     </div>
@@ -723,6 +745,42 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-hob"></div>
       </div>
     </div>
+    <div class="app-mini-card app-hv" data-card-type="open" data-appliance="hoover" onclick="appQuickFilter('hoover')" title="Click to filter by Hoover">
+      <div class="app-mini-icon">🌪️</div>
+      <div>
+        <div class="app-mini-val" id="app-open-hoover">-</div>
+        <div class="app-mini-label">Hoover open</div>
+        <div class="app-mini-sub"><span id="app-total-hoover">-</span> total in view</div>
+        <div class="app-mini-trend" id="app-trend-hoover"></div>
+      </div>
+    </div>
+    <div class="app-mini-card app-fr" data-card-type="open" data-appliance="fridge" onclick="appQuickFilter('fridge')" title="Click to filter by Fridge">
+      <div class="app-mini-icon">🧊</div>
+      <div>
+        <div class="app-mini-val" id="app-open-fridge">-</div>
+        <div class="app-mini-label">Fridge open</div>
+        <div class="app-mini-sub"><span id="app-total-fridge">-</span> total in view</div>
+        <div class="app-mini-trend" id="app-trend-fridge"></div>
+      </div>
+    </div>
+    <div class="app-mini-card app-mat" data-card-type="open" data-appliance="mattress" onclick="appQuickFilter('mattress')" title="Click to filter by Mattress">
+      <div class="app-mini-icon">🛏️</div>
+      <div>
+        <div class="app-mini-val" id="app-open-mattress">-</div>
+        <div class="app-mini-label">Mattress open</div>
+        <div class="app-mini-sub"><span id="app-total-mattress">-</span> total in view</div>
+        <div class="app-mini-trend" id="app-trend-mattress"></div>
+      </div>
+    </div>
+    <div class="app-mini-card app-ov" data-card-type="open" data-appliance="oven" onclick="appQuickFilter('oven')" title="Click to filter by Oven">
+      <div class="app-mini-icon">🍽️</div>
+      <div>
+        <div class="app-mini-val" id="app-open-oven">-</div>
+        <div class="app-mini-label">Oven open</div>
+        <div class="app-mini-sub"><span id="app-total-oven">-</span> total in view</div>
+        <div class="app-mini-trend" id="app-trend-oven"></div>
+      </div>
+    </div>
   </div>
 
   <div class="table-card" style="margin-bottom:20px">
@@ -764,6 +822,10 @@ body.filter-closed-only [data-card-type="open"]{display:none}
             <label class="ms-opt"><input type="checkbox" value="dryer"           onchange="renderTable()"> 🌀 Dryer</label>
             <label class="ms-opt"><input type="checkbox" value="hot_water"       onchange="renderTable()"> 🔥 Hot Water</label>
             <label class="ms-opt"><input type="checkbox" value="hob"             onchange="renderTable()"> 🍳 Hob</label>
+            <label class="ms-opt"><input type="checkbox" value="hoover"          onchange="renderTable()"> 🌪️ Hoover</label>
+            <label class="ms-opt"><input type="checkbox" value="fridge"          onchange="renderTable()"> 🧊 Fridge</label>
+            <label class="ms-opt"><input type="checkbox" value="mattress"        onchange="renderTable()"> 🛏️ Mattress</label>
+            <label class="ms-opt"><input type="checkbox" value="oven"            onchange="renderTable()"> 🍽️ Oven</label>
             <label class="ms-opt"><input type="checkbox" value="other"           onchange="renderTable()"> Other</label>
           </div>
         </div>
@@ -1233,7 +1295,7 @@ function applyFilters() {
         if (f.depts.length && f.depts.indexOf(getDeptForTeam(t.team)) === -1) return false;
         return true;
     });
-    var APPLIANCE_LABELS = {washing_machine:'Washing Machine', dryer:'Dryer', hot_water:'Hot Water', hob:'Hob', other:'Other'};
+    var APPLIANCE_LABELS = {washing_machine:'Washing Machine', dryer:'Dryer', hot_water:'Hot Water', hob:'Hob', hoover:'Hoover', fridge:'Fridge', mattress:'Mattress', oven:'Oven', other:'Other'};
     msUpdateLabel('ms-year',      'All Years');
     msUpdateLabel('ms-month',     'All Months', MONTH_SHORT);
     msUpdateLabel('ms-open',      'All', {open:'Open', closed:'Closed'});
@@ -1388,7 +1450,7 @@ function updateStats() {
         : 'closed <14 days';
     // Appliance mini-cards
     var now30 = new Date(); now30.setDate(now30.getDate() - 30);
-    ['washing_machine','dryer','hot_water','hob'].forEach(function(type) {
+    ['washing_machine','dryer','hot_water','hob','hoover','fridge','mattress','oven'].forEach(function(type) {
         var subset = filteredData.filter(function(t){ return (t.appliance_type||'other') === type; });
         var openC  = subset.filter(function(t){ return t.isOpen || t.status === 'Reported'; }).length;
         var openEl = document.getElementById('app-open-' + type);
@@ -2207,7 +2269,7 @@ function renderTable() {
     var tblPriKeys    = Object.keys(tblPriorityActive);
     msUpdateLabel('ms-tbl-open',      'All',        {open:'Open', closed:'Closed', reopened:'Reopened'});
     msUpdateLabel('ms-tbl-status',    'All Statuses');
-    msUpdateLabel('ms-tbl-appliance', 'All Types',  {washing_machine:'Washing Machine', dryer:'Dryer', hot_water:'Hot Water', hob:'Hob', other:'Other'});
+    msUpdateLabel('ms-tbl-appliance', 'All Types',  {washing_machine:'Washing Machine', dryer:'Dryer', hot_water:'Hot Water', hob:'Hob', hoover:'Hoover', fridge:'Fridge', mattress:'Mattress', oven:'Oven', other:'Other'});
     msUpdateLabel('ms-tbl-city',      'All Cities', {dublin:'Dublin', cork:'Cork', limerick:'Limerick'});
     msUpdateLabel('ms-tbl-team',      'All Teams');
     msUpdateLabel('ms-tbl-dept',      'All Departments');
@@ -2348,6 +2410,10 @@ function renderTable() {
             if (at === 'dryer')           return '<span style="background:rgba(139,148,158,0.15);border:1px solid rgba(139,148,158,0.35);color:#8b949e;padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;white-space:nowrap;vertical-align:middle;margin-right:5px">DRY</span>';
             if (at === 'hot_water')       return '<span style="background:rgba(240,136,62,0.12);border:1px solid rgba(240,136,62,0.35);color:var(--orange);padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;white-space:nowrap;vertical-align:middle;margin-right:5px">HW</span>';
             if (at === 'hob')             return '<span style="background:rgba(0,172,193,0.12);border:1px solid rgba(0,172,193,0.35);color:#00acc1;padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;white-space:nowrap;vertical-align:middle;margin-right:5px">HOB</span>';
+            if (at === 'hoover')          return '<span style="background:rgba(171,71,188,0.12);border:1px solid rgba(171,71,188,0.35);color:#ab47bc;padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;white-space:nowrap;vertical-align:middle;margin-right:5px">HV</span>';
+            if (at === 'fridge')          return '<span style="background:rgba(38,198,218,0.12);border:1px solid rgba(38,198,218,0.35);color:#26c6da;padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;white-space:nowrap;vertical-align:middle;margin-right:5px">FR</span>';
+            if (at === 'mattress')        return '<span style="background:rgba(141,110,99,0.12);border:1px solid rgba(141,110,99,0.35);color:#8d6e63;padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;white-space:nowrap;vertical-align:middle;margin-right:5px">MAT</span>';
+            if (at === 'oven')            return '<span style="background:rgba(239,83,80,0.12);border:1px solid rgba(239,83,80,0.35);color:#ef5350;padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;white-space:nowrap;vertical-align:middle;margin-right:5px">OV</span>';
             return '';
         })();
         return '<tr' + rowAttrs + '>' +
@@ -2493,6 +2559,10 @@ function _detectApplianceType(title) {
     if (t.indexOf('washing machine') !== -1) return 'washing_machine';
     if (t.indexOf('dryer') !== -1)           return 'dryer';
     if (t.indexOf('hob') !== -1)             return 'hob';
+    if (t.indexOf('hoover') !== -1 || t.indexOf('vacuum cleaner') !== -1) return 'hoover';
+    if (t.indexOf('fridge') !== -1 || t.indexOf('refrigerator') !== -1)   return 'fridge';
+    if (t.indexOf('mattress') !== -1)        return 'mattress';
+    if (t.indexOf('oven') !== -1 || t.indexOf('cooker') !== -1)           return 'oven';
     return 'other';
 }
 
