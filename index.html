@@ -729,7 +729,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
   </div>
 
   <div class="appliance-stats">
-    <div class="app-mini-card app-wm" data-card-type="open" data-appliance="washing_machine" onclick="appQuickFilter('washing_machine')" title="Click to filter by Washing Machine">
+    <div class="app-mini-card app-wm" data-card-type="open" data-appliance="washing_machine" onclick="appQuickFilter('washing_machine', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🫧</div>
       <div>
         <div class="app-mini-val" id="app-open-washing_machine">-</div>
@@ -738,7 +738,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-washing_machine"></div>
       </div>
     </div>
-    <div class="app-mini-card app-dry" data-card-type="open" data-appliance="dryer" onclick="appQuickFilter('dryer')" title="Click to filter by Dryer">
+    <div class="app-mini-card app-dry" data-card-type="open" data-appliance="dryer" onclick="appQuickFilter('dryer', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🌀</div>
       <div>
         <div class="app-mini-val" id="app-open-dryer">-</div>
@@ -747,7 +747,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-dryer"></div>
       </div>
     </div>
-    <div class="app-mini-card app-hw" data-card-type="open" data-appliance="hot_water" onclick="appQuickFilter('hot_water')" title="Click to filter by Hot Water">
+    <div class="app-mini-card app-hw" data-card-type="open" data-appliance="hot_water" onclick="appQuickFilter('hot_water', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🔥</div>
       <div>
         <div class="app-mini-val" id="app-open-hot_water">-</div>
@@ -756,7 +756,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-hot_water"></div>
       </div>
     </div>
-    <div class="app-mini-card app-hob" data-card-type="open" data-appliance="hob" onclick="appQuickFilter('hob')" title="Click to filter by Hob">
+    <div class="app-mini-card app-hob" data-card-type="open" data-appliance="hob" onclick="appQuickFilter('hob', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🍳</div>
       <div>
         <div class="app-mini-val" id="app-open-hob">-</div>
@@ -765,7 +765,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-hob"></div>
       </div>
     </div>
-    <div class="app-mini-card app-hv" data-card-type="open" data-appliance="hoover" onclick="appQuickFilter('hoover')" title="Click to filter by Hoover">
+    <div class="app-mini-card app-hv" data-card-type="open" data-appliance="hoover" onclick="appQuickFilter('hoover', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🌪️</div>
       <div>
         <div class="app-mini-val" id="app-open-hoover">-</div>
@@ -774,7 +774,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-hoover"></div>
       </div>
     </div>
-    <div class="app-mini-card app-fr" data-card-type="open" data-appliance="fridge" onclick="appQuickFilter('fridge')" title="Click to filter by Fridge">
+    <div class="app-mini-card app-fr" data-card-type="open" data-appliance="fridge" onclick="appQuickFilter('fridge', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🧊</div>
       <div>
         <div class="app-mini-val" id="app-open-fridge">-</div>
@@ -783,7 +783,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-fridge"></div>
       </div>
     </div>
-    <div class="app-mini-card app-mat" data-card-type="open" data-appliance="mattress" onclick="appQuickFilter('mattress')" title="Click to filter by Mattress">
+    <div class="app-mini-card app-mat" data-card-type="open" data-appliance="mattress" onclick="appQuickFilter('mattress', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🛏️</div>
       <div>
         <div class="app-mini-val" id="app-open-mattress">-</div>
@@ -792,7 +792,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-mattress"></div>
       </div>
     </div>
-    <div class="app-mini-card app-ov" data-card-type="open" data-appliance="oven" onclick="appQuickFilter('oven')" title="Click to filter by Oven">
+    <div class="app-mini-card app-ov" data-card-type="open" data-appliance="oven" onclick="appQuickFilter('oven', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🍽️</div>
       <div>
         <div class="app-mini-val" id="app-open-oven">-</div>
@@ -801,7 +801,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-oven"></div>
       </div>
     </div>
-    <div class="app-mini-card app-cln" data-card-type="open" data-appliance="cleaning" onclick="appQuickFilter('cleaning')" title="Click to filter by Cleaning">
+    <div class="app-mini-card app-cln" data-card-type="open" data-appliance="cleaning" onclick="appQuickFilter('cleaning', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">🧹</div>
       <div>
         <div class="app-mini-val" id="app-open-cleaning">-</div>
@@ -810,7 +810,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-cleaning"></div>
       </div>
     </div>
-    <div class="app-mini-card app-lk" data-card-type="open" data-appliance="leak" onclick="appQuickFilter('leak')" title="Click to filter by Leak">
+    <div class="app-mini-card app-lk" data-card-type="open" data-appliance="leak" onclick="appQuickFilter('leak', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">💧</div>
       <div>
         <div class="app-mini-val" id="app-open-leak">-</div>
@@ -819,7 +819,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-leak"></div>
       </div>
     </div>
-    <div class="app-mini-card app-cw" data-card-type="open" data-appliance="cold_water" onclick="appQuickFilter('cold_water')" title="Click to filter by Cold Water">
+    <div class="app-mini-card app-cw" data-card-type="open" data-appliance="cold_water" onclick="appQuickFilter('cold_water', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">❄️</div>
       <div>
         <div class="app-mini-val" id="app-open-cold_water">-</div>
@@ -828,7 +828,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
         <div class="app-mini-trend" id="app-trend-cold_water"></div>
       </div>
     </div>
-    <div class="app-mini-card app-oth" data-card-type="open" data-appliance="other" onclick="appQuickFilter('other')" title="Click to filter by Other">
+    <div class="app-mini-card app-oth" data-card-type="open" data-appliance="other" onclick="appQuickFilter('other', event)" title="Click to filter · Ctrl+Click to add to selection">
       <div class="app-mini-icon">📋</div>
       <div>
         <div class="app-mini-val" id="app-open-other">-</div>
@@ -1443,10 +1443,20 @@ function setQuickRange(val, btn) {
     applyFilters();
 }
 
-function appQuickFilter(type) {
+function appQuickFilter(type, event) {
     var drop = document.getElementById('ms-appliance');
     if (!drop) return;
-    drop.querySelectorAll('input').forEach(function(c){ c.checked = c.value === type; });
+    var multi = event && (event.ctrlKey || event.metaKey);
+    if (multi) {
+        // Ctrl/Cmd+click: toggle this type in/out of the current selection
+        var cb = drop.querySelector('input[value="' + type + '"]');
+        if (cb) cb.checked = !cb.checked;
+    } else {
+        // Normal click: select only this type; click same card again to deselect all
+        var already = drop.querySelectorAll('input:checked');
+        var onlyThis = already.length === 1 && already[0].value === type;
+        drop.querySelectorAll('input').forEach(function(c){ c.checked = !onlyThis && c.value === type; });
+    }
     applyFilters();
 }
 
