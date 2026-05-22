@@ -2660,7 +2660,9 @@ function _showDashboard(user) {
     _backfillApplianceType();
     populateStatusDropdowns();
 
-    // Default selections: Year 2026 + Open (global), Open (table)
+    // Default selections: Year 2025 + 2026 + Open (global), Open (table)
+    var yr25 = document.querySelector('#ms-year input[value="2025"]');
+    if (yr25 && !yr25.checked) { yr25.checked = true; msUpdateLabel('ms-year', 'All Years'); }
     var yr26 = document.querySelector('#ms-year input[value="2026"]');
     if (yr26 && !yr26.checked) { yr26.checked = true; msUpdateLabel('ms-year', 'All Years'); }
     var tblOpen = document.querySelector('#ms-tbl-open input[value="open"]');
