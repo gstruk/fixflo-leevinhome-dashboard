@@ -37,9 +37,13 @@ jobs:
           GDRIVE_CREDENTIALS_JSON: ${{ secrets.GDRIVE_CREDENTIALS_JSON }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
         run: |
+          set +e
           CSV_PATH=$(python download_from_drive.py 2>drive_stderr.txt)
           EXIT_CODE=$?
-          cat drive_stderr.txt >&2
+          set -e
+          echo "--- download_from_drive output ---"
+          cat drive_stderr.txt
+          echo "---------------------------------"
           if [ $EXIT_CODE -ne 0 ]; then
             echo "csv_found=false" >> "$GITHUB_OUTPUT"
           else
