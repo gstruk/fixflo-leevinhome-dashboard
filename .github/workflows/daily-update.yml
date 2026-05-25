@@ -1,0 +1,144 @@
+name: Daily Dashboard Update
+
+on:
+  schedule:
+    # 8:00 UTC = 9:00 Ireland (IST/BST), Mon-Fri
+    - cron: '0 8 * * 1-5'
+  workflow_dispatch:
+    # Allows manual trigger from GitHub Actions tab (useful for testing)
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Google Drive dependencies
+        run: pip install google-api-python-client google-auth
+
+      - name: Prepare dashboard source files
+        run: |
+          # fixflo-dashboard.html is the working copy; index.html is the deployed copy
+          [ -f fixflo-dashboard.html ] || cp index.html fixflo-dashboard.html
+          [ -f team_history.json ] || echo '{}' > team_history.json
+
+      - name: Download CSV from Google Drive
+        id: download
+        env:
+          GDRIVE_CREDENTIALS_JSON: ${{ secrets.GDRIVE_CREDENTIALS_JSON }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: |
+          CSV_PATH=$(python download_from_drive.py 2>drive_stderr.txt)
+          EXIT_CODE=$?
+          cat drive_stderr.txt >&2
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "csv_found=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "csv_found=true" >> "$GITHUB_OUTPUT"
+            echo "csv_path=$CSV_PATH" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify missing CSV and fail
+        if: steps.download.outputs.csv_found == 'false'
+        env:
+          GCHAT_WEBHOOK_URLS: ${{ secrets.GCHAT_WEBHOOK_URLS }}
+        run: |
+          python - <<'PYEOF'
+          import os, json, urllib.request, sys
+          msg = "failed to update the CSV File today from Fixflo / google drive"
+          raw = os.environ.get("GCHAT_WEBHOOK_URLS", "[]")
+          try:
+              webhooks = json.loads(raw)
+          except Exception:
+              webhooks = [raw] if raw.startswith("http") else []
+          for url in webhooks:
+              req = urllib.request.Request(
+                  url,
+                  data=json.dumps({"text": msg}).encode(),
+                  headers={"Content-Type": "application/json"},
+                  method="POST",
+              )
+              try:
+                  urllib.request.urlopen(req, timeout=15)
+                  print(f"Notified: {url[:60]}...")
+              except Exception as e:
+                  print(f"Webhook failed: {e}", file=sys.stderr)
+          PYEOF
+          exit 1
+
+      - name: Create github_config.json
+        env:
+          GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
+          GCHAT_WEBHOOK_URLS: ${{ secrets.GCHAT_WEBHOOK_URLS }}
+        run: |
+          python - <<'PYEOF'
+          import os, json
+          raw = os.environ.get("GCHAT_WEBHOOK_URLS", "[]")
+          try:
+              webhooks = json.loads(raw)
+          except Exception:
+              webhooks = [raw] if raw.startswith("http") else []
+          cfg = {
+              "token":    os.environ["GH_PAGES_TOKEN"],
+              "owner":    "gstruk",
+              "repo":     "fixflo-leevinhome-dashboard",
+              "site_url": "https://gstruk.github.io/fixflo-leevinhome-dashboard/",
+              "gchat_webhooks": webhooks,
+          }
+          with open("github_config.json", "w") as f:
+              json.dump(cfg, f)
+          print("github_config.json created.")
+          PYEOF
+
+      - name: Run dashboard update
+        run: |
+          python update_dashboard.py \
+            --csv-path "${{ steps.download.outputs.csv_path }}" \
+            --ci
+
+      - name: Commit updated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html fixflo-dashboard.html team_history.json
+          git diff --cached --quiet && echo "No changes to commit." || \
+            git commit -m "Auto update dashboard $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
+
+      - name: Notify failure
+        if: failure()
+        env:
+          GCHAT_WEBHOOK_URLS: ${{ secrets.GCHAT_WEBHOOK_URLS }}
+        run: |
+          python - <<'PYEOF'
+          import os, json, urllib.request, sys
+          msg = (
+            "Fixflo dashboard auto-update FAILED.\n"
+            "Check GitHub Actions: https://github.com/gstruk/fixflo-leevinhome-dashboard/actions"
+          )
+          raw = os.environ.get("GCHAT_WEBHOOK_URLS", "[]")
+          try:
+              webhooks = json.loads(raw)
+          except Exception:
+              webhooks = [raw] if raw.startswith("http") else []
+          for url in webhooks:
+              req = urllib.request.Request(
+                  url,
+                  data=json.dumps({"text": msg}).encode(),
+                  headers={"Content-Type": "application/json"},
+                  method="POST",
+              )
+              try:
+                  urllib.request.urlopen(req, timeout=15)
+              except Exception as e:
+                  print(f"Webhook failed: {e}", file=sys.stderr)
+          PYEOF
