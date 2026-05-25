@@ -59,11 +59,12 @@ jobs:
           python - <<'PYEOF'
           import os, json, urllib.request, sys
           msg = "failed to update the CSV File today from Fixflo / google drive"
-          raw = os.environ.get("GCHAT_WEBHOOK_URLS", "[]")
+          raw = os.environ.get("GCHAT_WEBHOOK_URLS", "[]").strip()
           try:
               webhooks = json.loads(raw)
           except Exception:
               webhooks = [raw] if raw.startswith("http") else []
+          webhooks = [u.strip() for u in webhooks if u.strip()]
           for url in webhooks:
               req = urllib.request.Request(
                   url,
@@ -129,11 +130,12 @@ jobs:
             "Fixflo dashboard auto-update FAILED.\n"
             "Check GitHub Actions: https://github.com/gstruk/fixflo-leevinhome-dashboard/actions"
           )
-          raw = os.environ.get("GCHAT_WEBHOOK_URLS", "[]")
+          raw = os.environ.get("GCHAT_WEBHOOK_URLS", "[]").strip()
           try:
               webhooks = json.loads(raw)
           except Exception:
               webhooks = [raw] if raw.startswith("http") else []
+          webhooks = [u.strip() for u in webhooks if u.strip()]
           for url in webhooks:
               req = urllib.request.Request(
                   url,
