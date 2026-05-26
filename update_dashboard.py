@@ -55,7 +55,7 @@ TEAM_DEPT_MAP = {
     'Maintenance - Dublin': 'Facilities Team', 'Maintenance - Cork': 'Facilities Team',
     'Technician - Dublin': 'Facilities Team', 'Technician - Cork': 'Facilities Team',
     'Waiting for Completion': 'Facilities Team', 'Facilities Admin': 'Facilities Team',
-    'FIELD AGENT': 'Facilities Team', 'Inspection - Next step': 'Facilities Team',
+    'FIELD AGENT': 'Facilities Team',
     # Commercial Team
     'Commercial Team': 'Commercial Team',
     # Property Management
@@ -64,7 +64,7 @@ TEAM_DEPT_MAP = {
     'Furniture Analysis': 'Property Management',
     'Maint. - Inspec - Low score': 'Property Management', 'Maint. - Inspec - High score': 'Property Management',
     'Bills': 'Property Management', 'Inspecao/Manutencao Preventiva': 'Property Management',
-    'Landlord - On hold': 'Property Management',
+    'Landlord - On hold': 'Property Management', 'Inspection - Next step': 'Property Management',
     '4 - LL - Follow up  customer': 'Property Management', '4-LL- Follow Up Customer': 'Property Management',
     '4 - LL - Follow Up Customer': 'Property Management',
     # Purchasing (Finance)
