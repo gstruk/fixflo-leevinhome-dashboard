@@ -69,6 +69,7 @@ TEAM_DEPT_MAP = {
     '4 - LL - Follow Up Customer': 'Property Management',
     # Purchasing (Finance)
     'Purchasing': 'Purchasing (Finance)', 'Waiting for Purchasing': 'Purchasing (Finance)',
+    'Waiting Delivery': 'Purchasing (Finance)',
 }
 DEPT_ORDER = ['CX Team', 'Facilities Team', 'Commercial Team', 'Property Management', 'Purchasing (Finance)', 'Others']
 
