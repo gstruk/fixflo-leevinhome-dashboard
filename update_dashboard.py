@@ -202,15 +202,16 @@ def update_team_history(csv_records, today_str):
         rd   = rec.get("rd") or today_str
         cd   = rec.get("cd")
         is_open = rec.get("isOpen", True)
+        was_unassigned = rec.get("_was_unassigned", False)
 
         if not team:
             continue
 
         if id_ not in history:
-            # New ticket first seen today.
-            # If it was raised today we can trust rd; otherwise we only know
-            # the team assignment as of today — don't backdate what we haven't tracked.
-            since = rd if rd == today_str else today_str
+            # Unassigned tickets (→ CX Team): backdate to raised date — CX Team
+            # owns them from creation. Explicitly assigned tickets: only backdate
+            # if raised today (we can't know when they were assigned before tracking).
+            since = rd if (was_unassigned or rd == today_str) else today_str
             history[id_] = {
                 "team_since": since,
                 "history": [{"team": team, "from": since, "to": None}],
@@ -339,9 +340,13 @@ def csv_row_to_record(row):
     is_communal  = row.get("IsCommunal", "").strip().lower() == "true"
     job_done     = jc_dt.strftime("%Y-%m-%d") if jc_dt else None
 
+    raw_team = row["AssignedTeam"].strip()
+    # Unassigned tickets are CX Team's responsibility from the moment they're created
+    team = raw_team or "CX Team"
+
     return {
         "id": row["Id"],
-        "team": row["AssignedTeam"],
+        "team": team,
         "status": row["IssueStatus"],
         "isOpen": is_open,
         "ry": rd_dt.year if rd_dt else None,
@@ -365,8 +370,9 @@ def csv_row_to_record(row):
         "is_communal": is_communal,
         "job_done":    job_done,
         # populated later
-        "team_since":  None,
-        "team_history": None,
+        "team_since":    None,
+        "team_history":  None,
+        "_was_unassigned": not bool(raw_team),
     }
 
 
