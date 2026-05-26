@@ -41,6 +41,10 @@ def _csv_dt(name):
     return datetime(1970, 1, 1)
 
 
+SHEETS_MIME = "application/vnd.google-apps.spreadsheet"
+CSV_MIME    = "text/csv"
+
+
 def main():
     creds = service_account.Credentials.from_service_account_info(
         json.loads(CREDENTIALS_JSON),
@@ -48,8 +52,12 @@ def main():
     )
     service = build("drive", "v3", credentials=creds, cache_discovery=False)
 
-    q = f"'{FOLDER_ID}' in parents and mimeType='text/csv' and trashed=false"
-    result = service.files().list(q=q, fields="files(id,name)", pageSize=50).execute()
+    # Search for both plain CSV files and Google Sheets (Drive auto-converts uploaded CSVs)
+    q = (
+        f"'{FOLDER_ID}' in parents and trashed=false and "
+        f"(mimeType='{CSV_MIME}' or mimeType='{SHEETS_MIME}')"
+    )
+    result = service.files().list(q=q, fields="files(id,name,mimeType)", pageSize=50).execute()
     files = result.get("files", [])
 
     csv_files = [
@@ -59,16 +67,22 @@ def main():
     ]
 
     if not csv_files:
-        print("ERROR: No Fixflo CSV found in Google Drive folder.", file=sys.stderr)
+        print("ERROR: No Fixflo CSV or Google Sheet found in Google Drive folder.", file=sys.stderr)
         sys.exit(1)
 
     latest = max(csv_files, key=lambda f: _csv_dt(f["name"]))
-    print(f"Downloading: {latest['name']}", file=sys.stderr)
+    print(f"Downloading: {latest['name']} (type: {latest['mimeType']})", file=sys.stderr)
 
     tmp = tempfile.NamedTemporaryFile(suffix=".csv", delete=False, prefix="fixflo_")
     tmp.close()
 
-    request = service.files().get_media(fileId=latest["id"])
+    if latest["mimeType"] == SHEETS_MIME:
+        # Google Sheets file -- export as CSV
+        request = service.files().export_media(fileId=latest["id"], mimeType=CSV_MIME)
+    else:
+        # Plain CSV file -- download directly
+        request = service.files().get_media(fileId=latest["id"])
+
     with open(tmp.name, "wb") as fh:
         downloader = MediaIoBaseDownload(fh, request)
         done = False
