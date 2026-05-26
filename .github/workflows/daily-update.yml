@@ -2,8 +2,8 @@ name: Daily Dashboard Update
 
 on:
   schedule:
-    # 8:00 UTC = 9:00 Ireland (IST/BST), Mon-Fri
-    - cron: '0 8 * * 1-5'
+    # 8:15 UTC = 9:15 Dublin (BST/summer). In winter (GMT) this runs at 8:15 Dublin.
+    - cron: '15 8 * * 1-5'
   workflow_dispatch:
     # Allows manual trigger from GitHub Actions tab (useful for testing)
 
