@@ -40,7 +40,7 @@
     ]
   },
   "IS22373270": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
@@ -50,6 +50,11 @@
       {
         "team": "Technician - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Outsource - Quotation",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -390,7 +395,7 @@
     ]
   },
   "IS22371031": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Technician - Dublin",
@@ -400,6 +405,11 @@
       {
         "team": "Maintenance - Dublin",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Outsource - Scheduled work",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -590,7 +600,7 @@
     ]
   },
   "IS22362911": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -600,6 +610,11 @@
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "2 - LL - Waiting answer",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -885,11 +900,16 @@
     ]
   },
   "IS22353218": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "2 - LL - Waiting answer",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -945,11 +965,16 @@
     ]
   },
   "IS22348478": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -1120,11 +1145,16 @@
     ]
   },
   "IS22333582": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -1300,11 +1330,16 @@
     ]
   },
   "IS22327891": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Purchasing",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -1390,11 +1425,16 @@
     ]
   },
   "IS22318733": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -1840,7 +1880,7 @@
     ]
   },
   "IS22294209": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Purchasing",
@@ -1850,6 +1890,11 @@
       {
         "team": "Waiting Delivery",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -2005,11 +2050,16 @@
     ]
   },
   "IS22283548": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -2190,11 +2240,16 @@
     ]
   },
   "IS22273448": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -2395,7 +2450,7 @@
     ]
   },
   "IS22255641": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Technician - Cork",
@@ -2405,6 +2460,11 @@
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "2 - LL - Waiting answer",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -2550,21 +2610,31 @@
     ]
   },
   "IS22245578": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22245572": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -2945,7 +3015,7 @@
     ]
   },
   "IS22202422": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Technician - Dublin",
@@ -2955,6 +3025,11 @@
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -3035,11 +3110,16 @@
     ]
   },
   "IS22199478": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Purchasing",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -3255,11 +3335,16 @@
     ]
   },
   "IS22159304": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -3405,7 +3490,7 @@
     ]
   },
   "IS22125370": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -3415,6 +3500,11 @@
       {
         "team": "CX Waiting Customer",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -3470,11 +3560,16 @@
     ]
   },
   "IS22107648": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -3600,11 +3695,16 @@
     ]
   },
   "IS22091080": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "5 - LL - Inspection",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -3670,11 +3770,16 @@
     ]
   },
   "IS22078462": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -3740,11 +3845,16 @@
     ]
   },
   "IS22068244": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "2 - LL - Waiting answer",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "3 - LL- Agreed",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -4130,7 +4240,7 @@
     ]
   },
   "IS22001008": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "3 - LL- Agreed",
@@ -4140,6 +4250,11 @@
       {
         "team": "Maintenance - Dublin",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5150,11 +5265,16 @@
     ]
   },
   "IS21789528": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Purchasing",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5170,11 +5290,16 @@
     ]
   },
   "IS21779316": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5190,11 +5315,16 @@
     ]
   },
   "IS21779288": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5235,11 +5365,16 @@
     ]
   },
   "IS21774607": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Purchasing",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5365,11 +5500,16 @@
     ]
   },
   "IS21746335": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "2 - LL - Waiting answer",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5740,11 +5880,16 @@
     ]
   },
   "IS21608346": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Purchasing",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5820,11 +5965,16 @@
     ]
   },
   "IS21601945": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5910,11 +6060,16 @@
     ]
   },
   "IS21590283": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "CX Team",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -5985,7 +6140,7 @@
     ]
   },
   "IS21575483": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
@@ -5995,6 +6150,11 @@
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -6390,7 +6550,7 @@
     ]
   },
   "IS21410990": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Purchasing",
@@ -6400,6 +6560,11 @@
       {
         "team": "Furniture Analysis",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -7035,11 +7200,16 @@
     ]
   },
   "IS20971151": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Dublin",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -7430,11 +7600,16 @@
     ]
   },
   "IS20696969": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Dublin",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -7710,11 +7885,16 @@
     ]
   },
   "IS20251756": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Furniture Analysis",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -8170,7 +8350,7 @@
     ]
   },
   "IS19744465": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Outsource - Quotation",
@@ -8180,6 +8360,11 @@
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "6 - LL - Approval of quotation",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -8465,11 +8650,16 @@
     ]
   },
   "IS22391723": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -8605,7 +8795,7 @@
     ]
   },
   "IS22386741": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Dublin",
@@ -8615,6 +8805,11 @@
       {
         "team": "1 - LANDLORD",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "2 - LL - Waiting answer",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -8750,11 +8945,16 @@
     ]
   },
   "IS22385181": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Purchasing",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -8780,21 +8980,31 @@
     ]
   },
   "IS22383860": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22383858": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "CX Team",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -8870,7 +9080,7 @@
     ]
   },
   "IS22382610": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -8880,12 +9090,17 @@
       {
         "team": "Inspection - Next step",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22382607": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -8895,22 +9110,32 @@
       {
         "team": "Inspection - Next step",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22382331": {
-    "team_since": "2026-05-26",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-26",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22382235": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -8920,6 +9145,11 @@
       {
         "team": "Inspection - Next step",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9015,51 +9245,76 @@
     ]
   },
   "IS22380799": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22380797": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22380794": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22380788": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22380787": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Cork",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9075,7 +9330,7 @@
     ]
   },
   "IS22380571": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -9085,6 +9340,11 @@
       {
         "team": "Maintenance - Dublin",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9115,11 +9375,16 @@
     ]
   },
   "IS22379959": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Inspection - Next step",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9135,7 +9400,7 @@
     ]
   },
   "IS22379515": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -9145,12 +9410,17 @@
       {
         "team": "Maintenance - Dublin",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22379511": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
@@ -9160,16 +9430,26 @@
       {
         "team": "Inspection - Next step",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22379505": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Inspection - Next step",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9360,11 +9640,16 @@
     ]
   },
   "IS22401228": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "4 - LL - Follow up  customer",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9440,11 +9725,16 @@
     ]
   },
   "IS22400692": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "Maintenance - Dublin",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9460,11 +9750,16 @@
     ]
   },
   "IS22400658": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9480,21 +9775,31 @@
     ]
   },
   "IS22400602": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
   },
   "IS22400504": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "4 - LL - Follow up  customer",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9510,11 +9815,16 @@
     ]
   },
   "IS22400252": {
-    "team_since": "2026-05-28",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Waiting Customer",
         "from": "2026-05-28",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9610,11 +9920,16 @@
     ]
   },
   "IS22397233": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9660,11 +9975,16 @@
     ]
   },
   "IS22396455": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9720,11 +10040,16 @@
     ]
   },
   "IS22395551": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Furniture Analysis",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9750,11 +10075,16 @@
     ]
   },
   "IS22394663": {
-    "team_since": "2026-05-27",
+    "team_since": "2026-05-29",
     "history": [
       {
         "team": "CX Team",
         "from": "2026-05-27",
+        "to": "2026-05-29"
+      },
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
         "to": null
       }
     ]
@@ -9795,6 +10125,346 @@
       {
         "team": "HK Team - Dublin",
         "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22414453": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22414291": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22414267": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22414266": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22414264": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22414262": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22414137": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22413945": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22413483": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22413000": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412861": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "CX Limerick - Start Working",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412825": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412799": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412778": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412732": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412628": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412624": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Furniture Analysis",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412563": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412529": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412511": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Purchasing",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22412510": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Furniture Analysis",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22411932": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Cork",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22411097": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22411096": {
+    "team_since": "2026-05-28",
+    "history": [
+      {
+        "team": "CX Team",
+        "from": "2026-05-28",
+        "to": null
+      }
+    ]
+  },
+  "IS22410879": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22410820": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Cork",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22410440": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Cork",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22410073": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22409985": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22409870": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "HK Team - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22408245": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Technician - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22407149": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Maintenance - Dublin",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22406162": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Inspection - Next step",
+        "from": "2026-05-29",
+        "to": null
+      }
+    ]
+  },
+  "IS22206619": {
+    "team_since": "2026-05-29",
+    "history": [
+      {
+        "team": "Technician - Cork",
+        "from": "2026-05-29",
         "to": null
       }
     ]
