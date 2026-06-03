@@ -12,7 +12,7 @@ then run this script. It will:
 """
 
 import csv, json, re, shutil, glob, os, sys, base64, urllib.request, urllib.error, argparse
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -396,6 +396,47 @@ def extract_export_name(csv_path):
     return os.path.splitext(os.path.basename(csv_path))[0]
 
 
+def _working_days_ago(export_date, today):
+    """Return how many working days (Mon–Fri) separate export_date from today."""
+    if export_date >= today:
+        return 0
+    count = 0
+    d = today
+    while d > export_date:
+        d -= timedelta(days=1)
+        if d.weekday() < 5:  # Mon–Fri
+            count += 1
+    return count
+
+
+def check_csv_freshness(export_dt, ci_mode=False):
+    """Stop if the CSV is more than 1 working day old."""
+    today = date.today()
+    export_date = export_dt.date()
+    wdays = _working_days_ago(export_date, today)
+    if wdays <= 1:
+        return  # fresh enough
+
+    msg = (
+        f"\n  ╔══════════════════════════════════════════════════════╗\n"
+        f"  ║       ⛔  CSV FILE IS TOO OLD — UPDATE ABORTED       ║\n"
+        f"  ║                                                      ║\n"
+        f"  ║  CSV date   : {export_date}                          ║\n"
+        f"  ║  Today      : {today}                          ║\n"
+        f"  ║  Working days old: {wdays:<2}  (max allowed: 1)           ║\n"
+        f"  ║                                                      ║\n"
+        f"  ║  Please download a fresh export from Fixflo first.  ║\n"
+        f"  ╚══════════════════════════════════════════════════════╝\n"
+    )
+    print(msg)
+    if not ci_mode:
+        try:
+            input("  Press Enter to close...")
+        except EOFError:
+            pass
+    sys.exit(1)
+
+
 def main():
     # --- Parse arguments ---
     parser = argparse.ArgumentParser(description="Fixflo Dashboard Updater")
@@ -420,6 +461,7 @@ def main():
 
     # --- Parse export datetime ---
     export_dt = _csv_export_dt(csv_path)
+    check_csv_freshness(export_dt, ci_mode=args.ci)
 
     # --- Load CSV — only tracked appliance types are imported ---
     with open(csv_path, encoding="utf-8-sig") as f:
