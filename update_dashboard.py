@@ -559,6 +559,18 @@ def main():
         html
     )
 
+    # Sync JS TEAM_DEPT_MAP from Python source so they never drift
+    js_map_entries = ",\n    ".join(
+        f"'{k}': '{v}'" for k, v in TEAM_DEPT_MAP.items()
+    )
+    js_map_block = f"var TEAM_DEPT_MAP = {{\n    {js_map_entries}\n}};"
+    html = re.sub(
+        r"var TEAM_DEPT_MAP\s*=\s*\{.*?\};",
+        js_map_block,
+        html,
+        flags=re.DOTALL,
+    )
+
     # --- Save files ---
     with open(HTML_FILE, "w", encoding="utf-8") as f:
         f.write(html)
