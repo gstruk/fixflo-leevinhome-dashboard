@@ -313,6 +313,45 @@ def _strip_id(s):
     return m.group(1).strip() if m else s
 
 
+# ---------------------------------------------------------------------------
+# PII sanitization
+# ---------------------------------------------------------------------------
+
+_RE_EMAIL      = re.compile(r'[\w.+-]+@[\w-]+\.[\w.]+')
+_RE_PHONE      = re.compile(r'\+?\d[\d\s\-]{7,}')
+_RE_CREDENTIAL = re.compile(r'(?i)(password|senha)\s*[:=]\s*\S+')
+
+
+def _sanitize_fault_detail(text):
+    """Strip PII from a fault_detail string, then truncate to 150 chars."""
+    if not text:
+        return text
+    # Order: regex replacements first, truncate last
+    text = _RE_EMAIL.sub('[email removed]', text)
+    text = _RE_PHONE.sub('[tel removed]', text)
+    text = _RE_CREDENTIAL.sub('[credential removed]', text)
+    if len(text) > 150:
+        text = text[:150] + '...'
+    return text
+
+
+def sanitize_record(rec):
+    """
+    Apply PII stripping rules to a single issue record in-place.
+
+    - tenant:      Removed entirely (key never stored; not used in any metric)
+    - agent:       Set to '' (display-only; JS guard hides empty values)
+    - contractor:  Removed entirely (display-only; not used for grouping)
+    - fault_detail: Emails/phones/credentials stripped, then truncated to 150 chars
+    - addr:        Kept as-is (needed for property analysis)
+    """
+    rec.pop("tenant", None)
+    rec.pop("contractor", None)
+    rec["agent"] = ""
+    rec["fault_detail"] = _sanitize_fault_detail(rec.get("fault_detail"))
+    return rec
+
+
 def csv_row_to_record(row):
     rd_dt = parse_date(row["Raised date"])
     cd_dt = parse_date(row["IssueStatusChanged"])
@@ -341,9 +380,8 @@ def csv_row_to_record(row):
         priority = 0
 
     fault_detail = row.get("Fault detail", "").strip() or None
-    agent        = _strip_id(row.get("AssignedAgent", ""))
-    tenant       = _strip_id(row.get("TenantNameCaption", ""))
-    contractor   = _strip_id(row.get("JobContractorNameCaption", ""))
+    # agent and tenant are read from CSV but PII-stripped before storage
+    # contractor is read from CSV but removed at source
     tags         = row.get("Tags", "").strip() or None
     is_planned   = row.get("IsPlannedMaintenance", "").strip().lower() == "true"
     is_communal  = row.get("IsCommunal", "").strip().lower() == "true"
@@ -353,7 +391,7 @@ def csv_row_to_record(row):
     # Unassigned tickets are CX Team's responsibility from the moment they're created
     team = raw_team or "CX Team"
 
-    return {
+    rec = {
         "id": row["Id"],
         "team": team,
         "status": row["IssueStatus"],
@@ -371,9 +409,7 @@ def csv_row_to_record(row):
         # enriched fields
         "addr":        addr,
         "fault_detail": fault_detail,
-        "agent":       agent,
-        "tenant":      tenant,
-        "contractor":  contractor,
+        "agent":       "",      # real name never stored; blanked at source
         "tags":        tags,
         "is_planned":  is_planned,
         "is_communal": is_communal,
@@ -382,7 +418,9 @@ def csv_row_to_record(row):
         "team_since":    None,
         "team_history":  None,
         "_was_unassigned": not bool(raw_team),
+        # tenant and contractor are intentionally omitted from this dict
     }
+    return sanitize_record(rec)
 
 
 def load_html_data(html):
@@ -437,6 +475,34 @@ def check_csv_freshness(export_dt, ci_mode=False):
     sys.exit(1)
 
 
+def main_from_existing():
+    """
+    --from-existing mode: re-apply PII strip rules to the existing var RAW block
+    in index.html without needing a CSV.  Reads INDEX_FILE, sanitizes every
+    record, re-injects the cleaned JSON, and writes the file back in-place.
+    """
+    print("Running in --from-existing mode (no CSV required).")
+    with open(INDEX_FILE, encoding="utf-8") as f:
+        html = f.read()
+
+    match, data = load_html_data(html)
+    before = len(data)
+    print(f"  Records found in existing RAW block: {before}")
+
+    for rec in data:
+        sanitize_record(rec)
+
+    html = html[:match.start()] + "var RAW =" + json.dumps(data, separators=(",", ":"), ensure_ascii=False) + ";" + html[match.end():]
+
+    with open(INDEX_FILE, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    after_count = len(data)
+    print(f"  Records after sanitization: {after_count}")
+    print(f"  Issue count {'UNCHANGED' if before == after_count else 'CHANGED — CHECK THIS'}.")
+    print(f"  Saved cleaned HTML to: {INDEX_FILE}")
+
+
 def main():
     # --- Parse arguments ---
     parser = argparse.ArgumentParser(description="Fixflo Dashboard Updater")
@@ -444,7 +510,13 @@ def main():
                         help="Path to the CSV file (skips auto-discovery and archiving)")
     parser.add_argument("--ci", action="store_true",
                         help="CI mode: skip GitHub API deploy and interactive prompts")
+    parser.add_argument("--from-existing", action="store_true",
+                        help="Re-apply PII stripping to the existing RAW block in index.html (no CSV needed)")
     args = parser.parse_args()
+
+    if args.from_existing:
+        main_from_existing()
+        return
 
     # --- Find CSV ---
     if args.csv_path:
@@ -590,6 +662,11 @@ def main():
     except Exception:
         ts_display = close_date + " 00:00:00"
         ts_strong = close_date + " · updated"
+
+    # --- Final PII sanitization pass (defence-in-depth: covers records that
+    #     were already in the dashboard before this script added strip logic) ---
+    for rec in data:
+        sanitize_record(rec)
 
     html = html[:match.start()] + "var RAW =" + json.dumps(data, separators=(",", ":"), ensure_ascii=False) + ";" + html[match.end():]
     html = re.sub(r"Generated: [\d\- :]+", "Generated: " + ts_display, html)
