@@ -564,9 +564,17 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 .dept-badge[data-dept="Others"]{background:rgba(158,158,158,0.1);color:#bdbdbd;border-color:rgba(158,158,158,0.35)}
 @media(max-width:768px){.dept-badge{padding:2px 7px;font-size:0.65rem}}</style>
 
-<!-- Property Health Overview – new styles (ph- prefix, no collision with existing CSS) -->
+<!-- Leaflet.js – interactive map (no API key required) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Property Health Overview – styles (ph- prefix, no collision with existing CSS) -->
 <style>
-.ph-section{padding:20px;border-top:2px solid #eee;margin-top:30px}
+@keyframes phFadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.ph-section{padding:20px;border-top:2px solid #eee;margin-top:30px;opacity:0}
+.ph-section.ph-visible{animation:phFadeIn .5s ease forwards}
+.ph-header{text-align:center;padding:18px 0 6px;margin-bottom:4px}
+.ph-header-rule{font-size:11px;font-weight:700;letter-spacing:.18em;color:#888;text-transform:uppercase}
 .ph-section-title{font-size:13px;font-weight:700;letter-spacing:.08em;color:#555;text-transform:uppercase;margin-bottom:14px}
 .ph-grid{display:grid;grid-template-columns:40% 60%;gap:24px}
 .ph-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
@@ -578,9 +586,10 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 .ph-number{font-size:48px;font-weight:700;line-height:1;display:block;margin-bottom:4px}
 .ph-card-label{font-size:12px;font-weight:600;opacity:.95}
 .ph-card-criterion{font-size:11px;opacity:.8;margin-top:3px}
-.ph-map-placeholder{background:#e0e0e0;height:220px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#666;font-size:13px}
+.ph-map-placeholder{height:280px;width:100%;border-radius:8px;overflow:hidden;background:#e8ecf0}
 .ph-table{width:100%;border-collapse:collapse}
-.ph-table th{background:#1a237e;color:#fff;padding:10px;text-align:left;font-size:12px;font-weight:600}
+.ph-table th{background:#1a237e;color:#fff;padding:10px;text-align:left;font-size:12px;font-weight:600;cursor:help}
+.ph-table th[title]:hover{background:#283593}
 .ph-table td{padding:9px 10px;border-bottom:1px solid #eee;font-size:13px}
 .ph-table tr:hover td{background:#f5f5f5}
 .ph-status-alerta{color:#c62828;font-weight:700}
@@ -589,6 +598,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 .ph-see-all{display:inline-block;margin-top:10px;font-size:13px;color:#1a237e;text-decoration:none;font-weight:600}
 .ph-see-all:hover{text-decoration:underline}
 @media(max-width:900px){.ph-grid{grid-template-columns:1fr}.ph-cards-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.ph-grid{grid-template-columns:1fr}.ph-cards-grid{grid-template-columns:1fr 1fr}.ph-map-placeholder{height:220px}.ph-number{font-size:36px}.ph-table th,.ph-table td{padding:7px 8px;font-size:11px}}
 </style>
 </head>
 <body>
@@ -2739,10 +2749,8 @@ function signOut() {
 })();
 </script>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     Property Health Overview – static section (Prompt 1 / Task 1)
-     Data will be replaced by live calculations in Prompt 2.
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- Property Health Overview section -->
+<div class="ph-header"><span class="ph-header-rule">── Property Health Overview ──</span></div>
 <div id="property-health-section" class="ph-section">
   <div class="ph-grid">
 
@@ -2771,7 +2779,7 @@ function signOut() {
           <div class="ph-card-criterion">&nbsp;</div>
         </div>
       </div>
-      <div id="property-map" class="ph-map-placeholder">Mapa a carregar...</div>
+      <div id="property-map" class="ph-map-placeholder"></div>
     </div>
 
     <!-- RIGHT COLUMN: property ranking table -->
@@ -2782,10 +2790,10 @@ function signOut() {
           <tr>
             <th>Casa</th>
             <th>Status</th>
-            <th>IS Abertas</th>
-            <th>Reclamações (30d)</th>
-            <th>Tempo Médio Resolução (dias)</th>
-            <th>Warnings Ativos</th>
+            <th title="Issues (tickets) abertos actualmente">IS Abertas</th>
+            <th title="Tickets abertos nos últimos 30 dias">Reclamações (30d)</th>
+            <th title="Média de dias para fechar tickets">Tempo Médio Resolução (dias)</th>
+            <th title="Tickets com prioridade alta/urgente">Warnings Ativos</th>
           </tr>
         </thead>
         <tbody id="ph-tbody">
@@ -2818,7 +2826,7 @@ function buildPropertyHealthData() {
     RAW.forEach(function(t) {
         var key = t.prop || '(sem propriedade)';
         if (!map[key]) {
-            map[key] = { name: key, openIssues: 0, recentComplaints: 0, totalDays: 0, closedCount: 0, activeWarnings: 0 };
+            map[key] = { name: key, addr: t.addr || key, postcode: t.postcode || '', openIssues: 0, recentComplaints: 0, totalDays: 0, closedCount: 0, activeWarnings: 0 };
         }
         var p = map[key];
         if (t.isOpen) {
@@ -2834,6 +2842,8 @@ function buildPropertyHealthData() {
         var status = p.openIssues > 10 ? 'ALERTA' : p.openIssues >= 5 ? 'ATENÇÃO' : 'ÓTIMO';
         return {
             name: p.name,
+            addr: p.addr,
+            postcode: p.postcode,
             openIssues: p.openIssues,
             recentComplaints: p.recentComplaints,
             avgResolutionDays: p.closedCount > 0 ? p.totalDays / p.closedCount : 0,
@@ -2903,6 +2913,87 @@ function renderPropertyHealth(data) {
             };
         }
     }
+
+    // Initialise map with real property data
+    initPropertyMap(props);
+
+    // FadeIn via IntersectionObserver when section scrolls into view
+    var section = document.getElementById('property-health-section');
+    if (section && 'IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
+                if (e.isIntersecting) { e.target.classList.add('ph-visible'); obs.unobserve(e.target); }
+            });
+        }, { threshold: 0.1 });
+        obs.observe(section);
+    } else if (section) {
+        section.classList.add('ph-visible');
+    }
+}
+
+var _phMap = null;
+var _phGeocodeTimers = [];
+
+function initPropertyMap(props) {
+    if (typeof L === 'undefined') return;
+    var container = document.getElementById('property-map');
+    if (!container) return;
+
+    // Clear any pending geocode timers
+    _phGeocodeTimers.forEach(function(t) { clearTimeout(t); });
+    _phGeocodeTimers = [];
+
+    // Destroy and re-create map if needed
+    if (_phMap) { _phMap.remove(); _phMap = null; }
+    container.innerHTML = '';
+
+    _phMap = L.map('property-map', { zoomControl: true, scrollWheelZoom: false })
+               .setView([53.3498, -6.2603], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18
+    }).addTo(_phMap);
+
+    function markerIcon(status) {
+        var color = status === 'ALERTA' ? '#c62828'
+                  : status === 'ATENÇÃO' ? '#f9a825' : '#2e7d32';
+        return L.divIcon({
+            className: '',
+            html: '<div style="width:14px;height:14px;border-radius:50%;background:' + color
+                + ';border:2px solid rgba(255,255,255,0.9);box-shadow:0 1px 4px rgba(0,0,0,0.5)"></div>',
+            iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -10]
+        });
+    }
+
+    // Geocode up to 60 properties with open issues (ALERTA first, already sorted desc)
+    var toGeocode = props.filter(function(p) { return p.openIssues > 0; }).slice(0, 60);
+    var delay = 0;
+
+    toGeocode.forEach(function(prop) {
+        var t = setTimeout(function() {
+            var q = encodeURIComponent((prop.addr || prop.name) + ', Ireland');
+            fetch('https://nominatim.openstreetmap.org/search?q=' + q + '&format=json&limit=1', {
+                headers: { 'Accept-Language': 'en', 'User-Agent': 'LeevinhomeFixfloDashboard/1.0' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(results) {
+                if (!results || !results.length || !_phMap) return;
+                var lat = parseFloat(results[0].lat), lon = parseFloat(results[0].lon);
+                if (isNaN(lat) || isNaN(lon)) return;
+                var popupColor = prop.status === 'ALERTA' ? '#c62828'
+                               : prop.status === 'ATENÇÃO' ? '#f9a825' : '#2e7d32';
+                L.marker([lat, lon], { icon: markerIcon(prop.status) })
+                    .addTo(_phMap)
+                    .bindPopup('<b>' + prop.name + '</b><br>'
+                        + '<span style="color:' + popupColor + ';font-weight:700">' + prop.status + '</span><br>'
+                        + prop.openIssues + ' IS abertas');
+            })
+            .catch(function() {});
+        }, delay);
+        _phGeocodeTimers.push(t);
+        delay += 1100; // respect Nominatim 1 req/sec rate limit
+    });
 }
 </script>
 
