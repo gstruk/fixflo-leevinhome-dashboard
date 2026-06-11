@@ -2714,6 +2714,7 @@ function _showDashboard(user) {
     applyFilters();
     var rcEl = document.getElementById('header-record-count');
     if (rcEl && typeof RAW !== 'undefined') rcEl.textContent = RAW.length.toLocaleString() + ' total records';
+    renderPropertyHealth(buildPropertyHealthData());
 }
 
 function signOut() {
@@ -2750,22 +2751,22 @@ function signOut() {
       <div class="ph-section-title">Resumo Geral das Casas</div>
       <div class="ph-cards-grid">
         <div class="ph-card-otimo">
-          <span class="ph-number">3</span>
+          <span class="ph-number" id="ph-count-otimo">3</span>
           <div class="ph-card-label">Casas em ÓTIMO DESEMPENHO</div>
           <div class="ph-card-criterion">Menos de 5 IS abertas</div>
         </div>
         <div class="ph-card-atencao">
-          <span class="ph-number">3</span>
+          <span class="ph-number" id="ph-count-atencao">3</span>
           <div class="ph-card-label">Casas em ATENÇÃO</div>
           <div class="ph-card-criterion">Entre 5 e 10 IS abertas</div>
         </div>
         <div class="ph-card-alerta">
-          <span class="ph-number">3</span>
+          <span class="ph-number" id="ph-count-alerta">3</span>
           <div class="ph-card-label">Casas em ALERTA</div>
           <div class="ph-card-criterion">Mais de 10 IS abertas</div>
         </div>
         <div class="ph-card-total">
-          <span class="ph-number">9</span>
+          <span class="ph-number" id="ph-count-total">9</span>
           <div class="ph-card-label">Total de Casas</div>
           <div class="ph-card-criterion">&nbsp;</div>
         </div>
@@ -2787,7 +2788,7 @@ function signOut() {
             <th>Warnings Ativos</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="ph-tbody">
           <tr><td>Casa 12</td><td class="ph-status-alerta">ALERTA</td><td>15</td><td>8</td><td>18.2</td><td>3</td></tr>
           <tr><td>Casa 05</td><td class="ph-status-alerta">ALERTA</td><td>12</td><td>5</td><td>15.6</td><td>2</td></tr>
           <tr><td>Casa 27</td><td class="ph-status-alerta">ALERTA</td><td>11</td><td>7</td><td>17.1</td><td>1</td></tr>
@@ -2799,11 +2800,111 @@ function signOut() {
           <tr><td>Casa 30</td><td class="ph-status-otimo">ÓTIMO</td><td>1</td><td>0</td><td>1.5</td><td>0</td></tr>
         </tbody>
       </table>
-      <a href="#" class="ph-see-all">Ver todas as casas →</a>
+      <a href="#" id="ph-see-all" class="ph-see-all">Ver todas as casas →</a>
     </div>
 
   </div>
 </div>
+
+<!-- Property Health Overview – data integration (Prompt 2) -->
+<script>
+function buildPropertyHealthData() {
+    if (typeof RAW === 'undefined') return null;
+    var now = new Date();
+    var cutoff30 = new Date(now);
+    cutoff30.setDate(cutoff30.getDate() - 30);
+
+    var map = {};
+    RAW.forEach(function(t) {
+        var key = t.prop || '(sem propriedade)';
+        if (!map[key]) {
+            map[key] = { name: key, openIssues: 0, recentComplaints: 0, totalDays: 0, closedCount: 0, activeWarnings: 0 };
+        }
+        var p = map[key];
+        if (t.isOpen) {
+            p.openIssues++;
+            if ((t.priority || 0) >= 4) p.activeWarnings++;
+        }
+        if (t.rd && new Date(t.rd) >= cutoff30) p.recentComplaints++;
+        if (!t.isOpen && t.days != null) { p.totalDays += t.days; p.closedCount++; }
+    });
+
+    var props = Object.keys(map).map(function(k) {
+        var p = map[k];
+        var status = p.openIssues > 10 ? 'ALERTA' : p.openIssues >= 5 ? 'ATENÇÃO' : 'ÓTIMO';
+        return {
+            name: p.name,
+            openIssues: p.openIssues,
+            recentComplaints: p.recentComplaints,
+            avgResolutionDays: p.closedCount > 0 ? p.totalDays / p.closedCount : 0,
+            activeWarnings: p.activeWarnings,
+            status: status
+        };
+    });
+
+    props.sort(function(a, b) { return b.openIssues - a.openIssues; });
+
+    var summary = { otimo: 0, atencao: 0, alerta: 0, total: props.length };
+    props.forEach(function(p) {
+        if (p.status === 'ALERTA') summary.alerta++;
+        else if (p.status === 'ATENÇÃO') summary.atencao++;
+        else summary.otimo++;
+    });
+
+    return { summary: summary, properties: props };
+}
+
+function renderPropertyHealth(data) {
+    if (!data) return;
+
+    var ids = { otimo: 'ph-count-otimo', atencao: 'ph-count-atencao', alerta: 'ph-count-alerta', total: 'ph-count-total' };
+    Object.keys(ids).forEach(function(k) {
+        var el = document.getElementById(ids[k]);
+        if (el) el.textContent = data.summary[k];
+    });
+
+    var props = data.properties;
+    var showAll = false;
+
+    function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function buildRows(list) {
+        return list.map(function(p) {
+            var cls = p.status === 'ALERTA' ? 'ph-status-alerta'
+                    : p.status === 'ATENÇÃO' ? 'ph-status-atencao'
+                    : 'ph-status-otimo';
+            return '<tr><td>' + escHtml(p.name) + '</td>'
+                + '<td class="' + cls + '">' + escHtml(p.status) + '</td>'
+                + '<td>' + p.openIssues + '</td>'
+                + '<td>' + p.recentComplaints + '</td>'
+                + '<td>' + p.avgResolutionDays.toFixed(1) + '</td>'
+                + '<td>' + p.activeWarnings + '</td></tr>';
+        }).join('');
+    }
+
+    var tbody = document.getElementById('ph-tbody');
+    if (tbody) tbody.innerHTML = buildRows(props.slice(0, 9));
+
+    var seeAll = document.getElementById('ph-see-all');
+    if (seeAll) {
+        if (props.length <= 9) {
+            seeAll.style.display = 'none';
+        } else {
+            seeAll.textContent = 'Ver todas as casas (' + props.length + ') →';
+            seeAll.onclick = function(e) {
+                e.preventDefault();
+                showAll = !showAll;
+                if (tbody) tbody.innerHTML = buildRows(showAll ? props : props.slice(0, 9));
+                seeAll.textContent = showAll
+                    ? '← Mostrar menos'
+                    : 'Ver todas as casas (' + props.length + ') →';
+            };
+        }
+    }
+}
+</script>
 
 </body>
 </html>
