@@ -563,6 +563,33 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 .dept-badge[data-dept="Purchasing (Finance)"]{background:rgba(244,67,54,0.13);color:#ef9a9a;border-color:rgba(244,67,54,0.45)}
 .dept-badge[data-dept="Others"]{background:rgba(158,158,158,0.1);color:#bdbdbd;border-color:rgba(158,158,158,0.35)}
 @media(max-width:768px){.dept-badge{padding:2px 7px;font-size:0.65rem}}</style>
+
+<!-- Property Health Overview – new styles (ph- prefix, no collision with existing CSS) -->
+<style>
+.ph-section{padding:20px;border-top:2px solid #eee;margin-top:30px}
+.ph-section-title{font-size:13px;font-weight:700;letter-spacing:.08em;color:#555;text-transform:uppercase;margin-bottom:14px}
+.ph-grid{display:grid;grid-template-columns:40% 60%;gap:24px}
+.ph-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.ph-card-otimo,.ph-card-atencao,.ph-card-alerta,.ph-card-total{padding:16px;border-radius:8px;color:#fff}
+.ph-card-otimo{background:#2e7d32}
+.ph-card-atencao{background:#f9a825}
+.ph-card-alerta{background:#c62828}
+.ph-card-total{background:#90a4ae}
+.ph-number{font-size:48px;font-weight:700;line-height:1;display:block;margin-bottom:4px}
+.ph-card-label{font-size:12px;font-weight:600;opacity:.95}
+.ph-card-criterion{font-size:11px;opacity:.8;margin-top:3px}
+.ph-map-placeholder{background:#e0e0e0;height:220px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#666;font-size:13px}
+.ph-table{width:100%;border-collapse:collapse}
+.ph-table th{background:#1a237e;color:#fff;padding:10px;text-align:left;font-size:12px;font-weight:600}
+.ph-table td{padding:9px 10px;border-bottom:1px solid #eee;font-size:13px}
+.ph-table tr:hover td{background:#f5f5f5}
+.ph-status-alerta{color:#c62828;font-weight:700}
+.ph-status-atencao{color:#f57f17;font-weight:700}
+.ph-status-otimo{color:#2e7d32;font-weight:700}
+.ph-see-all{display:inline-block;margin-top:10px;font-size:13px;color:#1a237e;text-decoration:none;font-weight:600}
+.ph-see-all:hover{text-decoration:underline}
+@media(max-width:900px){.ph-grid{grid-template-columns:1fr}.ph-cards-grid{grid-template-columns:1fr 1fr}}
+</style>
 </head>
 <body>
 
@@ -2710,5 +2737,73 @@ function signOut() {
     } catch(e) {}
 })();
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Property Health Overview – static section (Prompt 1 / Task 1)
+     Data will be replaced by live calculations in Prompt 2.
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="property-health-section" class="ph-section">
+  <div class="ph-grid">
+
+    <!-- LEFT COLUMN: summary cards + map placeholder -->
+    <div>
+      <div class="ph-section-title">Resumo Geral das Casas</div>
+      <div class="ph-cards-grid">
+        <div class="ph-card-otimo">
+          <span class="ph-number">3</span>
+          <div class="ph-card-label">Casas em ÓTIMO DESEMPENHO</div>
+          <div class="ph-card-criterion">Menos de 5 IS abertas</div>
+        </div>
+        <div class="ph-card-atencao">
+          <span class="ph-number">3</span>
+          <div class="ph-card-label">Casas em ATENÇÃO</div>
+          <div class="ph-card-criterion">Entre 5 e 10 IS abertas</div>
+        </div>
+        <div class="ph-card-alerta">
+          <span class="ph-number">3</span>
+          <div class="ph-card-label">Casas em ALERTA</div>
+          <div class="ph-card-criterion">Mais de 10 IS abertas</div>
+        </div>
+        <div class="ph-card-total">
+          <span class="ph-number">9</span>
+          <div class="ph-card-label">Total de Casas</div>
+          <div class="ph-card-criterion">&nbsp;</div>
+        </div>
+      </div>
+      <div id="property-map" class="ph-map-placeholder">Mapa a carregar...</div>
+    </div>
+
+    <!-- RIGHT COLUMN: property ranking table -->
+    <div>
+      <div class="ph-section-title">Classificação das Casas</div>
+      <table class="ph-table">
+        <thead>
+          <tr>
+            <th>Casa</th>
+            <th>Status</th>
+            <th>IS Abertas</th>
+            <th>Reclamações (30d)</th>
+            <th>Tempo Médio Resolução (dias)</th>
+            <th>Warnings Ativos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Casa 12</td><td class="ph-status-alerta">ALERTA</td><td>15</td><td>8</td><td>18.2</td><td>3</td></tr>
+          <tr><td>Casa 05</td><td class="ph-status-alerta">ALERTA</td><td>12</td><td>5</td><td>15.6</td><td>2</td></tr>
+          <tr><td>Casa 27</td><td class="ph-status-alerta">ALERTA</td><td>11</td><td>7</td><td>17.1</td><td>1</td></tr>
+          <tr><td>Casa 03</td><td class="ph-status-atencao">ATENÇÃO</td><td>8</td><td>4</td><td>9.4</td><td>0</td></tr>
+          <tr><td>Casa 18</td><td class="ph-status-atencao">ATENÇÃO</td><td>7</td><td>3</td><td>7.8</td><td>1</td></tr>
+          <tr><td>Casa 22</td><td class="ph-status-atencao">ATENÇÃO</td><td>6</td><td>2</td><td>6.1</td><td>0</td></tr>
+          <tr><td>Casa 07</td><td class="ph-status-otimo">ÓTIMO</td><td>3</td><td>1</td><td>3.2</td><td>0</td></tr>
+          <tr><td>Casa 15</td><td class="ph-status-otimo">ÓTIMO</td><td>2</td><td>0</td><td>2.1</td><td>0</td></tr>
+          <tr><td>Casa 30</td><td class="ph-status-otimo">ÓTIMO</td><td>1</td><td>0</td><td>1.5</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <a href="#" class="ph-see-all">Ver todas as casas →</a>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
