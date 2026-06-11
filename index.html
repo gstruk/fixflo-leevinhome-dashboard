@@ -597,6 +597,14 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 .ph-status-otimo{color:#2e7d32;font-weight:700}
 .ph-see-all{display:inline-block;margin-top:10px;font-size:13px;color:#1a237e;text-decoration:none;font-weight:600}
 .ph-see-all:hover{text-decoration:underline}
+#ph-filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 0;margin-bottom:12px;border-bottom:1px solid #eee}
+#ph-filter-search{padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;min-width:160px;outline:none}
+#ph-filter-bar select{padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;background:#fff;cursor:pointer;outline:none}
+#ph-filter-search:focus,#ph-filter-bar select:focus{border-color:#1a237e}
+#ph-filter-search.ph-active,#ph-filter-bar select.ph-active{border-color:#1a237e;background:#f0f4ff}
+#ph-filter-reset{padding:7px 14px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;font-size:12px;cursor:pointer;color:#555}
+#ph-filter-reset:hover{background:#e0e0e0}
+#ph-filter-count{font-size:12px;color:#888;margin-left:auto;white-space:nowrap}
 @media(max-width:900px){.ph-grid{grid-template-columns:1fr}.ph-cards-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.ph-grid{grid-template-columns:1fr}.ph-cards-grid{grid-template-columns:1fr 1fr}.ph-map-placeholder{height:220px}.ph-number{font-size:36px}.ph-table th,.ph-table td{padding:7px 8px;font-size:11px}}
 </style>
@@ -2785,6 +2793,39 @@ function signOut() {
     <!-- RIGHT COLUMN: property ranking table -->
     <div>
       <div class="ph-section-title">Property Classification</div>
+
+      <!-- Filter bar -->
+      <div id="ph-filter-bar">
+        <input type="text" id="ph-filter-search" placeholder="Search property..." autocomplete="off"/>
+        <select id="ph-filter-status">
+          <option value="">All Statuses</option>
+          <option value="ALERT">Alert</option>
+          <option value="ATTENTION">Attention</option>
+          <option value="GOOD">Good</option>
+        </select>
+        <select id="ph-filter-issues">
+          <option value="">All Issue Counts</option>
+          <option value="0-4">0 – 4 (Good range)</option>
+          <option value="5-10">5 – 10 (Attention range)</option>
+          <option value="11+">11+ (Alert range)</option>
+        </select>
+        <select id="ph-filter-warnings">
+          <option value="">All Warning Levels</option>
+          <option value="0">No warnings</option>
+          <option value="1+">Has warnings</option>
+        </select>
+        <select id="ph-filter-sort">
+          <option value="issues-desc">Most Open Issues First</option>
+          <option value="issues-asc">Fewest Open Issues First</option>
+          <option value="resolution-desc">Slowest Resolution First</option>
+          <option value="resolution-asc">Fastest Resolution First</option>
+          <option value="name-asc">Property Name A–Z</option>
+          <option value="complaints-desc">Most Complaints First</option>
+        </select>
+        <button id="ph-filter-reset">Reset Filters</button>
+        <span id="ph-filter-count"></span>
+      </div>
+
       <table class="ph-table">
         <thead>
           <tr>
@@ -2894,25 +2935,11 @@ function renderPropertyHealth(data) {
         }).join('');
     }
 
-    var tbody = document.getElementById('ph-tbody');
-    if (tbody) tbody.innerHTML = buildRows(props.slice(0, 9));
-
-    var seeAll = document.getElementById('ph-see-all');
-    if (seeAll) {
-        if (props.length <= 9) {
-            seeAll.style.display = 'none';
-        } else {
-            seeAll.textContent = 'View all properties (' + props.length + ') →';
-            seeAll.onclick = function(e) {
-                e.preventDefault();
-                showAll = !showAll;
-                if (tbody) tbody.innerHTML = buildRows(showAll ? props : props.slice(0, 9));
-                seeAll.textContent = showAll
-                    ? '← Show less'
-                    : 'View all properties (' + props.length + ') →';
-            };
-        }
-    }
+    // Store full dataset for filters, then wire up filter bar
+    ph_allProperties = props;
+    ph_buildRows = buildRows;
+    initPropertyHealthFilters();
+    applyPropertyHealthFilters();
 
     // Initialise map with real property data
     initPropertyMap(props);
@@ -2933,6 +2960,110 @@ function renderPropertyHealth(data) {
 
 var _phMap = null;
 var _phGeocodeTimers = [];
+var ph_allProperties = [];
+var ph_buildRows = null;
+var _phDebounceTimer = null;
+
+function initPropertyHealthFilters() {
+    var search   = document.getElementById('ph-filter-search');
+    var status   = document.getElementById('ph-filter-status');
+    var issues   = document.getElementById('ph-filter-issues');
+    var warnings = document.getElementById('ph-filter-warnings');
+    var sort     = document.getElementById('ph-filter-sort');
+    var reset    = document.getElementById('ph-filter-reset');
+    var seeAll   = document.getElementById('ph-see-all');
+    if (seeAll) seeAll.style.display = 'none'; // filter bar replaces see-all
+
+    function onChange() { applyPropertyHealthFilters(); }
+
+    function onSearch() {
+        clearTimeout(_phDebounceTimer);
+        _phDebounceTimer = setTimeout(applyPropertyHealthFilters, 200);
+    }
+
+    if (search)   { search.removeEventListener('input', onSearch);   search.addEventListener('input', onSearch); }
+    if (status)   { status.removeEventListener('change', onChange);   status.addEventListener('change', onChange); }
+    if (issues)   { issues.removeEventListener('change', onChange);   issues.addEventListener('change', onChange); }
+    if (warnings) { warnings.removeEventListener('change', onChange); warnings.addEventListener('change', onChange); }
+    if (sort)     { sort.removeEventListener('change', onChange);     sort.addEventListener('change', onChange); }
+
+    if (reset) {
+        reset.onclick = function() {
+            if (search)   { search.value = '';   search.classList.remove('ph-active'); }
+            if (status)   { status.value = '';   status.classList.remove('ph-active'); }
+            if (issues)   { issues.value = '';   issues.classList.remove('ph-active'); }
+            if (warnings) { warnings.value = ''; warnings.classList.remove('ph-active'); }
+            if (sort)     { sort.value = 'issues-desc'; sort.classList.remove('ph-active'); }
+            applyPropertyHealthFilters();
+        };
+    }
+}
+
+function applyPropertyHealthFilters() {
+    if (!ph_allProperties || !ph_allProperties.length) return;
+
+    var searchEl   = document.getElementById('ph-filter-search');
+    var statusEl   = document.getElementById('ph-filter-status');
+    var issuesEl   = document.getElementById('ph-filter-issues');
+    var warningsEl = document.getElementById('ph-filter-warnings');
+    var sortEl     = document.getElementById('ph-filter-sort');
+    var countEl    = document.getElementById('ph-filter-count');
+    var tbody      = document.getElementById('ph-tbody');
+
+    var q        = searchEl   ? searchEl.value.trim().toLowerCase()   : '';
+    var st       = statusEl   ? statusEl.value   : '';
+    var iss      = issuesEl   ? issuesEl.value   : '';
+    var warn     = warningsEl ? warningsEl.value : '';
+    var sortVal  = sortEl     ? sortEl.value     : 'issues-desc';
+
+    // Active highlight
+    [searchEl, statusEl, issuesEl, warningsEl].forEach(function(el) {
+        if (!el) return;
+        if (el.value && el.value !== '') el.classList.add('ph-active');
+        else el.classList.remove('ph-active');
+    });
+    if (sortEl) {
+        if (sortVal !== 'issues-desc') sortEl.classList.add('ph-active');
+        else sortEl.classList.remove('ph-active');
+    }
+
+    var filtered = ph_allProperties.filter(function(p) {
+        if (q && p.name.toLowerCase().indexOf(q) === -1) return false;
+        if (st && p.status !== st) return false;
+        if (iss) {
+            if (iss === '0-4'  && !(p.openIssues >= 0  && p.openIssues <= 4))  return false;
+            if (iss === '5-10' && !(p.openIssues >= 5  && p.openIssues <= 10)) return false;
+            if (iss === '11+'  && p.openIssues < 11) return false;
+        }
+        if (warn === '0'  && p.activeWarnings !== 0) return false;
+        if (warn === '1+' && p.activeWarnings < 1)   return false;
+        return true;
+    });
+
+    // Sort
+    filtered.sort(function(a, b) {
+        if (sortVal === 'issues-asc')        return a.openIssues - b.openIssues;
+        if (sortVal === 'resolution-desc')   return b.avgResolutionDays - a.avgResolutionDays;
+        if (sortVal === 'resolution-asc')    return a.avgResolutionDays - b.avgResolutionDays;
+        if (sortVal === 'name-asc')          return a.name.localeCompare(b.name);
+        if (sortVal === 'complaints-desc')   return b.recentComplaints - a.recentComplaints;
+        return b.openIssues - a.openIssues; // issues-desc (default)
+    });
+
+    // Render rows
+    if (tbody) {
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:20px">No properties match the current filters</td></tr>';
+        } else if (ph_buildRows) {
+            tbody.innerHTML = ph_buildRows(filtered);
+        }
+    }
+
+    // Update count
+    if (countEl) {
+        countEl.textContent = 'Showing ' + filtered.length + ' of ' + ph_allProperties.length + ' properties';
+    }
+}
 
 function initPropertyMap(props) {
     if (typeof L === 'undefined') return;
