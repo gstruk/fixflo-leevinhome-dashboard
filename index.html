@@ -2756,26 +2756,26 @@ function signOut() {
 
     <!-- LEFT COLUMN: summary cards + map placeholder -->
     <div>
-      <div class="ph-section-title">Resumo Geral das Casas</div>
+      <div class="ph-section-title">Property Summary</div>
       <div class="ph-cards-grid">
         <div class="ph-card-otimo">
           <span class="ph-number" id="ph-count-otimo">3</span>
-          <div class="ph-card-label">Casas em ÓTIMO DESEMPENHO</div>
-          <div class="ph-card-criterion">Menos de 5 IS abertas</div>
+          <div class="ph-card-label">Properties PERFORMING WELL</div>
+          <div class="ph-card-criterion">Fewer than 5 open issues</div>
         </div>
         <div class="ph-card-atencao">
           <span class="ph-number" id="ph-count-atencao">3</span>
-          <div class="ph-card-label">Casas em ATENÇÃO</div>
-          <div class="ph-card-criterion">Entre 5 e 10 IS abertas</div>
+          <div class="ph-card-label">Properties NEEDS ATTENTION</div>
+          <div class="ph-card-criterion">Between 5 and 10 open issues</div>
         </div>
         <div class="ph-card-alerta">
           <span class="ph-number" id="ph-count-alerta">3</span>
-          <div class="ph-card-label">Casas em ALERTA</div>
-          <div class="ph-card-criterion">Mais de 10 IS abertas</div>
+          <div class="ph-card-label">Properties ON ALERT</div>
+          <div class="ph-card-criterion">More than 10 open issues</div>
         </div>
         <div class="ph-card-total">
           <span class="ph-number" id="ph-count-total">9</span>
-          <div class="ph-card-label">Total de Casas</div>
+          <div class="ph-card-label">Total Properties</div>
           <div class="ph-card-criterion">&nbsp;</div>
         </div>
       </div>
@@ -2784,31 +2784,31 @@ function signOut() {
 
     <!-- RIGHT COLUMN: property ranking table -->
     <div>
-      <div class="ph-section-title">Classificação das Casas</div>
+      <div class="ph-section-title">Property Classification</div>
       <table class="ph-table">
         <thead>
           <tr>
-            <th>Casa</th>
+            <th>Property</th>
             <th>Status</th>
-            <th title="Issues (tickets) abertos actualmente">IS Abertas</th>
-            <th title="Tickets abertos nos últimos 30 dias">Reclamações (30d)</th>
-            <th title="Média de dias para fechar tickets">Tempo Médio Resolução (dias)</th>
-            <th title="Tickets com prioridade alta/urgente">Warnings Ativos</th>
+            <th title="Currently open maintenance issues">Open Issues</th>
+            <th title="Tickets opened in the last 30 days">Complaints (30d)</th>
+            <th title="Average days to close a ticket">Avg. Resolution Time (days)</th>
+            <th title="High priority or urgent open tickets">Active Warnings</th>
           </tr>
         </thead>
         <tbody id="ph-tbody">
-          <tr><td>Casa 12</td><td class="ph-status-alerta">ALERTA</td><td>15</td><td>8</td><td>18.2</td><td>3</td></tr>
-          <tr><td>Casa 05</td><td class="ph-status-alerta">ALERTA</td><td>12</td><td>5</td><td>15.6</td><td>2</td></tr>
-          <tr><td>Casa 27</td><td class="ph-status-alerta">ALERTA</td><td>11</td><td>7</td><td>17.1</td><td>1</td></tr>
-          <tr><td>Casa 03</td><td class="ph-status-atencao">ATENÇÃO</td><td>8</td><td>4</td><td>9.4</td><td>0</td></tr>
-          <tr><td>Casa 18</td><td class="ph-status-atencao">ATENÇÃO</td><td>7</td><td>3</td><td>7.8</td><td>1</td></tr>
-          <tr><td>Casa 22</td><td class="ph-status-atencao">ATENÇÃO</td><td>6</td><td>2</td><td>6.1</td><td>0</td></tr>
-          <tr><td>Casa 07</td><td class="ph-status-otimo">ÓTIMO</td><td>3</td><td>1</td><td>3.2</td><td>0</td></tr>
-          <tr><td>Casa 15</td><td class="ph-status-otimo">ÓTIMO</td><td>2</td><td>0</td><td>2.1</td><td>0</td></tr>
-          <tr><td>Casa 30</td><td class="ph-status-otimo">ÓTIMO</td><td>1</td><td>0</td><td>1.5</td><td>0</td></tr>
+          <tr><td>Casa 12</td><td class="ph-status-alerta">ALERT</td><td>15</td><td>8</td><td>18.2</td><td>3</td></tr>
+          <tr><td>Casa 05</td><td class="ph-status-alerta">ALERT</td><td>12</td><td>5</td><td>15.6</td><td>2</td></tr>
+          <tr><td>Casa 27</td><td class="ph-status-alerta">ALERT</td><td>11</td><td>7</td><td>17.1</td><td>1</td></tr>
+          <tr><td>Casa 03</td><td class="ph-status-atencao">ATTENTION</td><td>8</td><td>4</td><td>9.4</td><td>0</td></tr>
+          <tr><td>Casa 18</td><td class="ph-status-atencao">ATTENTION</td><td>7</td><td>3</td><td>7.8</td><td>1</td></tr>
+          <tr><td>Casa 22</td><td class="ph-status-atencao">ATTENTION</td><td>6</td><td>2</td><td>6.1</td><td>0</td></tr>
+          <tr><td>Casa 07</td><td class="ph-status-otimo">GOOD</td><td>3</td><td>1</td><td>3.2</td><td>0</td></tr>
+          <tr><td>Casa 15</td><td class="ph-status-otimo">GOOD</td><td>2</td><td>0</td><td>2.1</td><td>0</td></tr>
+          <tr><td>Casa 30</td><td class="ph-status-otimo">GOOD</td><td>1</td><td>0</td><td>1.5</td><td>0</td></tr>
         </tbody>
       </table>
-      <a href="#" id="ph-see-all" class="ph-see-all">Ver todas as casas →</a>
+      <a href="#" id="ph-see-all" class="ph-see-all">View all properties →</a>
     </div>
 
   </div>
@@ -2824,7 +2824,7 @@ function buildPropertyHealthData() {
 
     var map = {};
     RAW.forEach(function(t) {
-        var key = t.prop || '(sem propriedade)';
+        var key = t.prop || '(no property)';
         if (!map[key]) {
             map[key] = { name: key, addr: t.addr || key, postcode: t.postcode || '', openIssues: 0, recentComplaints: 0, totalDays: 0, closedCount: 0, activeWarnings: 0 };
         }
@@ -2839,7 +2839,7 @@ function buildPropertyHealthData() {
 
     var props = Object.keys(map).map(function(k) {
         var p = map[k];
-        var status = p.openIssues > 10 ? 'ALERTA' : p.openIssues >= 5 ? 'ATENÇÃO' : 'ÓTIMO';
+        var status = p.openIssues > 10 ? 'ALERT' : p.openIssues >= 5 ? 'ATTENTION' : 'GOOD';
         return {
             name: p.name,
             addr: p.addr,
@@ -2856,8 +2856,8 @@ function buildPropertyHealthData() {
 
     var summary = { otimo: 0, atencao: 0, alerta: 0, total: props.length };
     props.forEach(function(p) {
-        if (p.status === 'ALERTA') summary.alerta++;
-        else if (p.status === 'ATENÇÃO') summary.atencao++;
+        if (p.status === 'ALERT') summary.alerta++;
+        else if (p.status === 'ATTENTION') summary.atencao++;
         else summary.otimo++;
     });
 
@@ -2882,8 +2882,8 @@ function renderPropertyHealth(data) {
 
     function buildRows(list) {
         return list.map(function(p) {
-            var cls = p.status === 'ALERTA' ? 'ph-status-alerta'
-                    : p.status === 'ATENÇÃO' ? 'ph-status-atencao'
+            var cls = p.status === 'ALERT' ? 'ph-status-alerta'
+                    : p.status === 'ATTENTION' ? 'ph-status-atencao'
                     : 'ph-status-otimo';
             return '<tr><td>' + escHtml(p.name) + '</td>'
                 + '<td class="' + cls + '">' + escHtml(p.status) + '</td>'
@@ -2902,14 +2902,14 @@ function renderPropertyHealth(data) {
         if (props.length <= 9) {
             seeAll.style.display = 'none';
         } else {
-            seeAll.textContent = 'Ver todas as casas (' + props.length + ') →';
+            seeAll.textContent = 'View all properties (' + props.length + ') →';
             seeAll.onclick = function(e) {
                 e.preventDefault();
                 showAll = !showAll;
                 if (tbody) tbody.innerHTML = buildRows(showAll ? props : props.slice(0, 9));
                 seeAll.textContent = showAll
-                    ? '← Mostrar menos'
-                    : 'Ver todas as casas (' + props.length + ') →';
+                    ? '← Show less'
+                    : 'View all properties (' + props.length + ') →';
             };
         }
     }
@@ -2956,8 +2956,8 @@ function initPropertyMap(props) {
     }).addTo(_phMap);
 
     function markerIcon(status) {
-        var color = status === 'ALERTA' ? '#c62828'
-                  : status === 'ATENÇÃO' ? '#f9a825' : '#2e7d32';
+        var color = status === 'ALERT' ? '#c62828'
+                  : status === 'ATTENTION' ? '#f9a825' : '#2e7d32';
         return L.divIcon({
             className: '',
             html: '<div style="width:14px;height:14px;border-radius:50%;background:' + color
@@ -2981,13 +2981,13 @@ function initPropertyMap(props) {
                 if (!results || !results.length || !_phMap) return;
                 var lat = parseFloat(results[0].lat), lon = parseFloat(results[0].lon);
                 if (isNaN(lat) || isNaN(lon)) return;
-                var popupColor = prop.status === 'ALERTA' ? '#c62828'
-                               : prop.status === 'ATENÇÃO' ? '#f9a825' : '#2e7d32';
+                var popupColor = prop.status === 'ALERT' ? '#c62828'
+                               : prop.status === 'ATTENTION' ? '#f9a825' : '#2e7d32';
                 L.marker([lat, lon], { icon: markerIcon(prop.status) })
                     .addTo(_phMap)
                     .bindPopup('<b>' + prop.name + '</b><br>'
                         + '<span style="color:' + popupColor + ';font-weight:700">' + prop.status + '</span><br>'
-                        + prop.openIssues + ' IS abertas');
+                        + prop.openIssues + ' open issues');
             })
             .catch(function() {});
         }, delay);
