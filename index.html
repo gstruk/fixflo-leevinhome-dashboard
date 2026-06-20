@@ -1255,8 +1255,7 @@ function getRestartDate(t) {
 
 function dwtDays(t) {
     if (!t.team_since) return null;
-    var restart = getRestartDate(t);
-    var fromDate = (restart && restart > t.team_since) ? new Date(restart) : new Date(t.team_since);
+    var fromDate = new Date(t.team_since);
     var toDate = (!t.isOpen && t.cd) ? new Date(t.cd) : TODAY;
     return Math.max(0, Math.round((toDate - fromDate) / 86400000));
 }
@@ -2233,12 +2232,10 @@ function toggleRow(tr, id) {
         (function(){
             var d = dwtDays(t);
             if (d === null) return '';
-            var _rstE = getRestartDate(t);
-            var _sinceE = (_rstE && _rstE > (t.team_since||'')) ? _rstE : t.team_since;
-            var _sinceLblE = _sinceE ? (function(){ var p=_sinceE.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })() : null;
+            var _sinceLblE = t.team_since ? (function(){ var p=t.team_since.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })() : null;
             return '<div><div class="expand-label">Days with Team</div><div class="expand-val">' +
                 '<span class="' + (isOpenStat ? 'dwt-open' : 'dwt-closed') + '">' + d + 'd</span>' +
-                (_sinceLblE ? ' <span style="color:var(--muted);font-size:0.78rem">' + (_rstE ? '&#x21A9; ' : '') + 'since ' + _sinceLblE + '</span>' : '') +
+                (_sinceLblE ? ' <span style="color:var(--muted);font-size:0.78rem">since ' + _sinceLblE + '</span>' : '') +
                 '</div></div>';
         })() +
 
@@ -2265,7 +2262,6 @@ function toggleRow(tr, id) {
             // Determine close/reopen dates for visual markers
             var _closeDate  = (t.reopened && t.prev_cd) ? t.prev_cd : null;
             var _reopenDate = (_closeDate && t.isOpen && t.cd && t.cd > t.prev_cd) ? t.cd : null;
-            var _restartDate = getRestartDate(t);
 
             // Expand team_history into virtual entries, splitting around any closed interval
             var _virtual = [];
@@ -2342,19 +2338,17 @@ function toggleRow(tr, id) {
                     '<span style="font-size:0.73rem;margin-left:4px;color:' + (isCurr ? '#FF9800' : 'var(--muted)') + '">' + span + 'd</span>' +
                     '</div>');
             });
-            // Build total days per team — clipped to restart date for reopened tickets
+            // Build total days per team
             var teamTotals = {}, teamCounts = {};
             t.team_history.forEach(function(h){
                 var fromD = new Date(h.from);
                 var toD   = h.to ? new Date(h.to) : (!t.isOpen && t.cd ? new Date(t.cd) : TODAY);
-                if (_restartDate) fromD = new Date(Math.max(fromD.getTime(), new Date(_restartDate).getTime()));
                 var span = Math.max(0, Math.round((toD - fromD) / 86400000));
                 if (span > 0) {
                     teamTotals[h.team] = (teamTotals[h.team] || 0) + span;
                     teamCounts[h.team] = (teamCounts[h.team] || 0) + 1;
                 }
             });
-            var _restartNote = _restartDate ? (function(){ var p=_restartDate.split('-'); return ' <span style="font-size:0.68rem;color:#f0883e;margin-left:4px">&#x21A9; since '+p[2]+'/'+p[1]+'/'+p[0]+'</span>'; })() : '';
             var summaryRows = Object.keys(teamTotals).map(function(team){
                 var isCurr  = team === currentTeam;
                 var count   = teamCounts[team];
@@ -2402,7 +2396,7 @@ function toggleRow(tr, id) {
                     '<div style="font-size:0.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">&#x1F4CA; Total Days by Department</div>' +
                     deptRows.join('') +
                     '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:0.73rem">' +
-                      '<span style="color:var(--muted)">Total Duration' + _restartNote + ':</span>' +
+                      '<span style="color:var(--muted)">Total Duration:</span>' +
                       '<span style="color:#00aa44;font-weight:700">' + deptGrandTotal + ' days</span>' +
                     '</div>' +
                   '</div>' +
@@ -2610,10 +2604,8 @@ function renderTable() {
             (function(){
                 var d = dwtDays(t);
                 if (d === null) return '<td><span style="color:var(--muted);font-size:0.72rem" title="Team history not yet tracked">—</span></td>';
-                var _rstDate = getRestartDate(t);
-                var _sinceRaw = (_rstDate && _rstDate > (t.team_since||'')) ? _rstDate : t.team_since;
-                var sinceLabel = _sinceRaw ? (function(){ var p=_sinceRaw.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2); })() : null;
-                var _sinceTip = (_rstDate && _rstDate > (t.team_since||'')) ? 'Since reopen ' + (_rstDate||'') : 'With ' + (t.team||'team') + ' since ' + (t.team_since||'?');
+                var sinceLabel = t.team_since ? (function(){ var p=t.team_since.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2); })() : null;
+                var _sinceTip = 'With ' + (t.team||'team') + ' since ' + (t.team_since||'?');
                 return '<td><div style="display:flex;flex-direction:column;align-items:flex-start;gap:3px">' +
                     '<span class="' + (isOpenStat ? 'dwt-open' : 'dwt-closed') + '" title="' + _sinceTip + '">' + d + 'd</span>' +
                     (sinceLabel ? '<span style="color:var(--muted);font-size:0.66rem;line-height:1;padding-left:2px">since ' + sinceLabel + '</span>' : '') +
