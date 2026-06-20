@@ -2158,7 +2158,13 @@ function toggleRow(tr, id) {
     var isOpenStat = isOpenStatus(t.status);
 
     var timeField = '';
-    if (isClosed && t.days !== null) {
+    var _totalDaysOpen = t.isOpen ? daysOpen(t) : (t.days !== null ? t.days : null);
+    if (t.reopened && _totalDaysOpen !== null) {
+        timeField = '<div class="expand-label">Days Open (since raised)</div><div class="expand-val">' +
+            '<span style="background:rgba(63,185,80,0.18);color:#3fb950;border:1px solid rgba(63,185,80,0.45);' +
+            'padding:2px 8px;border-radius:4px;font-weight:700;font-size:0.82rem">' + _totalDaysOpen + 'd</span>' +
+            '<span style="color:var(--muted);font-size:0.75rem;margin-left:6px">since ' + fmtD(t.rd) + '</span></div>';
+    } else if (isClosed && t.days !== null) {
         var cls = t.days < 7 ? 'days-fast' : t.days < 30 ? 'days-med' : 'days-slow';
         timeField = '<div class="expand-label">Resolution Time</div><div class="expand-val"><span class="' + cls + '">' + t.days + ' days</span></div>';
     } else if (isOpenStat) {
