@@ -1249,11 +1249,8 @@ function animateVal(elId, val) {
 
 function getRestartDate(t) {
     if (!t.reopened || !t.prev_cd) return null;
-    var events = [t.prev_cd];
-    // Multi-cycle: if currently open but cd exists after prev_cd, it was closed/reopened again
-    if (t.isOpen && t.cd && t.cd > t.prev_cd) events.push(t.cd);
-    events.sort();
-    return events[events.length - 1]; // most recent restart date
+    if (t.isOpen && t.cd && t.cd > t.prev_cd) return t.cd;
+    return t.prev_cd;
 }
 
 function dwtDays(t) {
@@ -2259,35 +2256,64 @@ function toggleRow(tr, id) {
         (function(){
             if (!t.team_history || !t.team_history.length) return '';
             var currentTeam = t.team_history[t.team_history.length - 1].team;
-            // Build close/reopen event list for visual markers (multi-cycle support)
-            var _closeEvts = [];
-            if (t.reopened && t.prev_cd) _closeEvts.push(t.prev_cd);
-            if (t.reopened && t.isOpen && t.cd && t.prev_cd && t.cd > t.prev_cd) _closeEvts.push(t.cd);
-            _closeEvts.sort();
+            // Determine close/reopen dates for visual markers
+            var _closeDate  = (t.reopened && t.prev_cd) ? t.prev_cd : null;
+            var _reopenDate = (_closeDate && t.isOpen && t.cd && t.cd > t.prev_cd) ? t.cd : null;
             var _restartDate = getRestartDate(t);
 
-            // Expand team_history into virtual entries, splitting at each close event
+            // Expand team_history into virtual entries, splitting around any closed interval
             var _virtual = [];
-            var _markerInserted = {};
+            var _closedBlockInserted = false;
             t.team_history.forEach(function(h) {
-                var curFrom = h.from;
-                _closeEvts.forEach(function(evt) {
-                    if (curFrom < evt && (!h.to || h.to > evt)) {
-                        _virtual.push({ type: 'team', team: h.team, from: curFrom, to: evt });
-                        if (!_markerInserted[evt]) {
-                            _virtual.push({ type: 'marker', date: evt });
-                            _markerInserted[evt] = true;
-                        }
-                        curFrom = evt;
+                if (!_closeDate) {
+                    _virtual.push({ type: 'team', team: h.team, from: h.from, to: h.to });
+                    return;
+                }
+                var hFrom = h.from, hTo = h.to;
+                if (_reopenDate) {
+                    // Known closed interval [_closeDate, _reopenDate) — split entry around it
+                    if (hFrom < _closeDate) {
+                        _virtual.push({ type: 'team', team: h.team, from: hFrom, to: (!hTo || hTo > _closeDate) ? _closeDate : hTo });
+                        if (!_closedBlockInserted) { _virtual.push({ type: 'closedperiod', closeDate: _closeDate, reopenDate: _reopenDate }); _closedBlockInserted = true; }
+                        if (!hTo || hTo > _reopenDate) _virtual.push({ type: 'team', team: h.team, from: _reopenDate, to: hTo });
+                    } else if (hFrom < _reopenDate) {
+                        if (!_closedBlockInserted) { _virtual.push({ type: 'closedperiod', closeDate: _closeDate, reopenDate: _reopenDate }); _closedBlockInserted = true; }
+                        if (!hTo || hTo > _reopenDate) _virtual.push({ type: 'team', team: h.team, from: _reopenDate, to: hTo });
+                    } else {
+                        if (!_closedBlockInserted) { _virtual.push({ type: 'closedperiod', closeDate: _closeDate, reopenDate: _reopenDate }); _closedBlockInserted = true; }
+                        _virtual.push({ type: 'team', team: h.team, from: hFrom, to: hTo });
                     }
-                });
-                _virtual.push({ type: 'team', team: h.team, from: curFrom, to: h.to });
+                } else {
+                    // Only closeDate known — simple marker at close date
+                    var curFrom = hFrom;
+                    if (curFrom < _closeDate && (!hTo || hTo > _closeDate)) {
+                        _virtual.push({ type: 'team', team: h.team, from: curFrom, to: _closeDate });
+                        if (!_closedBlockInserted) { _virtual.push({ type: 'marker', date: _closeDate }); _closedBlockInserted = true; }
+                        curFrom = _closeDate;
+                    }
+                    _virtual.push({ type: 'team', team: h.team, from: curFrom, to: hTo });
+                }
             });
+            if (_closeDate && !_closedBlockInserted) {
+                _virtual.push(_reopenDate
+                    ? { type: 'closedperiod', closeDate: _closeDate, reopenDate: _reopenDate }
+                    : { type: 'marker', date: _closeDate });
+            }
             var _lastTeamIdx = -1;
             _virtual.forEach(function(e, i) { if (e.type === 'team') _lastTeamIdx = i; });
 
             var rows = [];
             _virtual.forEach(function(entry, i) {
+                if (entry.type === 'closedperiod') {
+                    var _cp = entry.closeDate.split('-'), _rp = entry.reopenDate.split('-');
+                    var _cd = Math.max(0, Math.round((new Date(entry.reopenDate) - new Date(entry.closeDate)) / 86400000));
+                    rows.push('<div style="display:flex;align-items:center;gap:6px;padding:5px 8px;margin:4px 0;background:rgba(240,136,62,0.08);border-radius:6px;border-left:3px solid rgba(240,136,62,0.5)">' +
+                        '<span style="font-size:0.72rem;color:#f0883e;font-weight:600">&#x1F512; Closed ' + _cp[2]+'/'+_cp[1]+'/'+_cp[0] +
+                        ' &nbsp;&#x2192;&nbsp; &#x21A9; Reopened ' + _rp[2]+'/'+_rp[1]+'/'+_rp[0] +
+                        ' &nbsp;&middot;&nbsp; ' + _cd + 'd closed</span>' +
+                        '</div>');
+                    return;
+                }
                 if (entry.type === 'marker') {
                     var _mp = entry.date.split('-');
                     rows.push('<div style="display:flex;align-items:center;gap:6px;padding:4px 0;margin:3px 0;border-top:1px dashed rgba(240,136,62,0.35);border-bottom:1px dashed rgba(240,136,62,0.35)">' +
