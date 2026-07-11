@@ -1732,6 +1732,16 @@ function updateCharts() {
 }
 
 // -- Property Health Score --
+var _allPropArr = [];
+var _propFilter  = '';
+var _propShowAll = false;
+
+function _fmtDate(rd) {
+    if (!rd) return '—';
+    var p = rd.split('-');
+    return p[2] + '/' + p[1] + '/' + p[0];
+}
+
 function buildApplianceDetail(propName) {
     var now = new Date();
     var curYear  = now.getFullYear();
@@ -1750,11 +1760,15 @@ function buildApplianceDetail(propName) {
         var lastStr = '<span style="color:var(--muted)">—</span>';
         if (sorted.length) {
             var last = sorted[0];
+            var dAgo = Math.floor((now - new Date(last.rd)) / 86400000);
+            var dateStr = _fmtDate(last.rd);
             if (last.isOpen) {
-                var dOpen = Math.floor((now - new Date(last.rd)) / 86400000);
-                lastStr = '<span style="color:#f85149;font-weight:600">' + dOpen + 'd (open)</span>';
-            } else if (last.days !== null) {
-                lastStr = last.days + 'd';
+                lastStr = dateStr +
+                    ' <span style="color:var(--muted);font-size:0.7rem">· ' + dAgo + 'd ago</span>' +
+                    ' <span style="color:#f85149;font-size:0.7rem">(open)</span>';
+            } else {
+                lastStr = dateStr +
+                    ' <span style="color:var(--muted);font-size:0.7rem">· ' + dAgo + 'd ago</span>';
             }
         }
         var mCell = thisMonth ? '<strong>' + thisMonth + '</strong>' : '<span style="color:var(--muted)">—</span>';
@@ -1762,7 +1776,7 @@ function buildApplianceDetail(propName) {
         return '<tr><td>' + a.label + '</td>' +
                '<td class="tc">' + mCell + '</td>' +
                '<td class="tc">' + yCell + '</td>' +
-               '<td class="tc">' + lastStr + '</td></tr>';
+               '<td class="tc" style="font-size:0.77rem">' + lastStr + '</td></tr>';
     }).join('');
     return '<div style="padding:8px 14px 12px;background:rgba(13,17,23,0.6)">' +
            '<table class="app-tbl">' +
@@ -1770,35 +1784,19 @@ function buildApplianceDetail(propName) {
              '<th>Appliance</th>' +
              '<th class="tc">This Month</th>' +
              '<th class="tc">This Year</th>' +
-             '<th class="tc">Last Ticket Open</th>' +
+             '<th class="tc">Last Raised</th>' +
            '</tr></thead>' +
            '<tbody>' + rows + '</tbody></table></div>';
 }
 
-function updatePropertyHealth(data) {
-    var props = {};
-    data.forEach(function(t) {
-        var p = t.prop;
-        if (p === 'Unknown') return;
-        if (!props[p]) props[p] = { name:p, count:0, totalDays:0, daysCnt:0, open:0, hiPri:0 };
-        props[p].count++;
-        if (t.days !== null) { props[p].totalDays += t.days; props[p].daysCnt++; }
-        if (t.isOpen || t.status !== 'Closed') props[p].open++;
-        if (t.priority <= 2) props[p].hiPri++;
-    });
-    var arr = [];
-    var keys = Object.keys(props);
-    keys.forEach(function(k) { arr.push(props[k]); });
-    arr.forEach(function(p) {
-        p.avgDays = p.daysCnt ? +(p.totalDays / p.daysCnt).toFixed(1) : 0;
-        p.score = Math.round((p.count + (p.avgDays / 10) + (p.open * 4) + (p.hiPri * 2)) * 10) / 10;
-    });
-    arr.sort(function(a, b) { return b.score - a.score; });
-    var top = arr.slice(0, 15);
-    var maxScore = top.length ? top[0].score : 1;
-
+function _renderPropHealthRows(display) {
+    var maxScore = _allPropArr.length ? _allPropArr[0].score : 1;
     var tbody = document.getElementById('propHealthBody');
-    tbody.innerHTML = top.map(function(p, i) {
+    if (!display.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;font-size:0.85rem">No properties match your search</td></tr>';
+        return;
+    }
+    tbody.innerHTML = display.map(function(p, i) {
         var pct = Math.round(p.score / maxScore * 100);
         var sc = pct > 65 ? '#f85149' : pct > 35 ? '#f0883e' : '#3fb950';
         var nm = p.name.length > 38 ? p.name.substring(0, 36) + '...' : p.name;
@@ -1827,6 +1825,60 @@ function updatePropertyHealth(data) {
         row.classList.toggle('ph-expanded', !isOpen);
     };
     tbody.addEventListener('click', tbody._phClick);
+}
+
+function _applyPropFilter() {
+    var filtered = _propFilter
+        ? _allPropArr.filter(function(p) { return p.name.toLowerCase().indexOf(_propFilter) !== -1; })
+        : _allPropArr;
+    var display = (_propShowAll || _propFilter) ? filtered : filtered.slice(0, 15);
+    _renderPropHealthRows(display);
+}
+
+function updatePropertyHealth(data) {
+    var props = {};
+    data.forEach(function(t) {
+        var p = t.prop;
+        if (p === 'Unknown') return;
+        if (!props[p]) props[p] = { name:p, count:0, totalDays:0, daysCnt:0, open:0, hiPri:0 };
+        props[p].count++;
+        if (t.days !== null) { props[p].totalDays += t.days; props[p].daysCnt++; }
+        if (t.isOpen || t.status !== 'Closed') props[p].open++;
+        if (t.priority <= 2) props[p].hiPri++;
+    });
+    var arr = [];
+    Object.keys(props).forEach(function(k) { arr.push(props[k]); });
+    arr.forEach(function(p) {
+        p.avgDays = p.daysCnt ? +(p.totalDays / p.daysCnt).toFixed(1) : 0;
+        p.score = Math.round((p.count + (p.avgDays / 10) + (p.open * 4) + (p.hiPri * 2)) * 10) / 10;
+    });
+    arr.sort(function(a, b) { return b.score - a.score; });
+    _allPropArr = arr;
+
+    if (!document.getElementById('propSearch')) {
+        var card = document.getElementById('propHealthBody').closest('.chart-card');
+        var titleDiv = card.querySelector('.chart-title');
+        var ctrl = document.createElement('div');
+        ctrl.style.cssText = 'display:flex;gap:8px;margin:8px 0 10px;align-items:center';
+        ctrl.innerHTML =
+            '<input id="propSearch" placeholder="Search property…" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:0.82rem;outline:none">' +
+            '<button id="propShowAllBtn" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;font-size:0.8rem;cursor:pointer;white-space:nowrap">Show all (' + arr.length + ')</button>';
+        titleDiv.after(ctrl);
+        document.getElementById('propSearch').addEventListener('input', function() {
+            _propFilter = this.value.toLowerCase();
+            _applyPropFilter();
+        });
+        document.getElementById('propShowAllBtn').addEventListener('click', function() {
+            _propShowAll = !_propShowAll;
+            this.textContent = _propShowAll ? 'Top 15' : 'Show all (' + _allPropArr.length + ')';
+            _applyPropFilter();
+        });
+    } else {
+        var btn = document.getElementById('propShowAllBtn');
+        if (btn && !_propShowAll) btn.textContent = 'Show all (' + arr.length + ')';
+    }
+
+    _applyPropFilter();
 }
 
 // -- SLA Compliance --
