@@ -562,7 +562,21 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 .dept-badge[data-dept="Property Management"]{background:rgba(255,152,0,0.13);color:#ffcc80;border-color:rgba(255,152,0,0.45)}
 .dept-badge[data-dept="Purchasing (Finance)"]{background:rgba(244,67,54,0.13);color:#ef9a9a;border-color:rgba(244,67,54,0.45)}
 .dept-badge[data-dept="Others"]{background:rgba(158,158,158,0.1);color:#bdbdbd;border-color:rgba(158,158,158,0.35)}
-@media(max-width:768px){.dept-badge{padding:2px 7px;font-size:0.65rem}}</style>
+@media(max-width:768px){.dept-badge{padding:2px 7px;font-size:0.65rem}}
+/* Appliance drill-down */
+.ph-row{cursor:pointer;transition:background 0.1s}
+.ph-row:hover{background:rgba(255,255,255,0.03)}
+.ph-row.ph-expanded{background:rgba(124,106,247,0.06)}
+.ph-expand-icon{display:inline-block;transition:transform 0.2s;font-style:normal;color:var(--muted);font-size:0.65rem;margin-right:4px;user-select:none}
+.ph-row.ph-expanded .ph-expand-icon{transform:rotate(90deg)}
+.ph-detail-row{display:none}
+.ph-detail-row.ph-visible{display:table-row}
+.app-tbl{width:100%;border-collapse:collapse;font-size:0.78rem;margin:4px 0}
+.app-tbl th{color:var(--muted);font-weight:600;font-size:0.72rem;padding:5px 10px;border-bottom:1px solid var(--border);text-align:left}
+.app-tbl td{padding:5px 10px;border-bottom:1px solid rgba(48,54,61,0.4)}
+.app-tbl tr:last-child td{border-bottom:none}
+.app-tbl .tc{text-align:center}
+</style>
 </head>
 <body>
 
@@ -1718,6 +1732,49 @@ function updateCharts() {
 }
 
 // -- Property Health Score --
+function buildApplianceDetail(propName) {
+    var now = new Date();
+    var curYear  = now.getFullYear();
+    var curMonth = now.getMonth() + 1;
+    var APPS = [
+        {key:'hot_water',       label:'Hot Water'},
+        {key:'washing_machine', label:'Washing Machine'},
+        {key:'dryer',           label:'Dryer'},
+        {key:'hob',             label:'Hob'}
+    ];
+    var rows = APPS.map(function(a) {
+        var tickets = RAW.filter(function(t) { return t.prop === propName && t.appliance_type === a.key; });
+        var thisMonth = tickets.filter(function(t) { return t.ry === curYear && t.rm === curMonth; }).length;
+        var thisYear  = tickets.filter(function(t) { return t.ry === curYear; }).length;
+        var sorted = tickets.slice().sort(function(x,y){ return (y.rd||'').localeCompare(x.rd||''); });
+        var lastStr = '<span style="color:var(--muted)">—</span>';
+        if (sorted.length) {
+            var last = sorted[0];
+            if (last.isOpen) {
+                var dOpen = Math.floor((now - new Date(last.rd)) / 86400000);
+                lastStr = '<span style="color:#f85149;font-weight:600">' + dOpen + 'd (open)</span>';
+            } else if (last.days !== null) {
+                lastStr = last.days + 'd';
+            }
+        }
+        var mCell = thisMonth ? '<strong>' + thisMonth + '</strong>' : '<span style="color:var(--muted)">—</span>';
+        var yCell = thisYear  ? thisYear  : '<span style="color:var(--muted)">—</span>';
+        return '<tr><td>' + a.label + '</td>' +
+               '<td class="tc">' + mCell + '</td>' +
+               '<td class="tc">' + yCell + '</td>' +
+               '<td class="tc">' + lastStr + '</td></tr>';
+    }).join('');
+    return '<div style="padding:8px 14px 12px;background:rgba(13,17,23,0.6)">' +
+           '<table class="app-tbl">' +
+           '<thead><tr>' +
+             '<th>Appliance</th>' +
+             '<th class="tc">This Month</th>' +
+             '<th class="tc">This Year</th>' +
+             '<th class="tc">Last Ticket Open</th>' +
+           '</tr></thead>' +
+           '<tbody>' + rows + '</tbody></table></div>';
+}
+
 function updatePropertyHealth(data) {
     var props = {};
     data.forEach(function(t) {
@@ -1745,9 +1802,10 @@ function updatePropertyHealth(data) {
         var pct = Math.round(p.score / maxScore * 100);
         var sc = pct > 65 ? '#f85149' : pct > 35 ? '#f0883e' : '#3fb950';
         var nm = p.name.length > 38 ? p.name.substring(0, 36) + '...' : p.name;
-        return '<tr>' +
-            '<td style="color:var(--muted);font-size:0.74rem">' + (i + 1) + '</td>' +
-            '<td title="' + p.name + '">' + nm + '</td>' +
+        var safeKey = p.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        var mainRow = '<tr class="ph-row" data-prop="' + safeKey + '">' +
+            '<td style="color:var(--muted);font-size:0.74rem"><i class="ph-expand-icon">&#9658;</i>' + (i + 1) + '</td>' +
+            '<td title="' + safeKey + '">' + nm + '</td>' +
             '<td style="text-align:center">' + p.count + '</td>' +
             '<td style="text-align:center">' + (p.open ? '<span style="color:#f85149;font-weight:600">' + p.open + '</span>' : '<span style="color:var(--muted)">0</span>') + '</td>' +
             '<td style="text-align:center">' + (p.avgDays ? p.avgDays + 'd' : '-') + '</td>' +
@@ -1755,7 +1813,20 @@ function updatePropertyHealth(data) {
             '<td style="white-space:nowrap"><span style="color:' + sc + ';font-weight:700;min-width:32px;display:inline-block">' + p.score + '</span>' +
             '<span class="score-bar" style="width:' + pct + 'px;background:' + sc + '33;border:1px solid ' + sc + '55"></span></td>' +
             '</tr>';
+        var detailRow = '<tr class="ph-detail-row"><td colspan="7" style="padding:0">' + buildApplianceDetail(p.name) + '</td></tr>';
+        return mainRow + detailRow;
     }).join('');
+    tbody.removeEventListener('click', tbody._phClick);
+    tbody._phClick = function(e) {
+        var row = e.target.closest('.ph-row');
+        if (!row) return;
+        var detail = row.nextElementSibling;
+        if (!detail || !detail.classList.contains('ph-detail-row')) return;
+        var isOpen = detail.classList.contains('ph-visible');
+        detail.classList.toggle('ph-visible', !isOpen);
+        row.classList.toggle('ph-expanded', !isOpen);
+    };
+    tbody.addEventListener('click', tbody._phClick);
 }
 
 // -- SLA Compliance --
