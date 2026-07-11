@@ -1742,7 +1742,8 @@ function _fmtDate(rd) {
     return p[2] + '/' + p[1] + '/' + p[0];
 }
 
-function buildApplianceDetail(propName) {
+// Accepts eircode to filter by unique property (postcode), falls back to propName
+function buildApplianceDetail(propName, eircode) {
     var now = new Date();
     var curYear  = now.getFullYear();
     var curMonth = now.getMonth() + 1;
@@ -1753,30 +1754,39 @@ function buildApplianceDetail(propName) {
         {key:'hob',             label:'Hob'}
     ];
     var rows = APPS.map(function(a) {
-        var tickets = RAW.filter(function(t) { return t.prop === propName && t.appliance_type === a.key; });
+        var tickets = RAW.filter(function(t) {
+            var match = eircode
+                ? (t.postcode || '').trim().toUpperCase() === eircode
+                : t.prop === propName;
+            return match && t.appliance_type === a.key;
+        });
         var thisMonth = tickets.filter(function(t) { return t.ry === curYear && t.rm === curMonth; }).length;
         var thisYear  = tickets.filter(function(t) { return t.ry === curYear; }).length;
         var sorted = tickets.slice().sort(function(x,y){ return (y.rd||'').localeCompare(x.rd||''); });
-        var lastStr = '<span style="color:var(--muted)">—</span>';
-        if (sorted.length) {
-            var last = sorted[0];
-            var dAgo = Math.floor((now - new Date(last.rd)) / 86400000);
-            var dateStr = _fmtDate(last.rd);
-            if (last.isOpen) {
-                lastStr = dateStr +
-                    ' <span style="color:var(--muted);font-size:0.7rem">· ' + dAgo + 'd ago</span>' +
-                    ' <span style="color:#f85149;font-size:0.7rem">(open)</span>';
-            } else {
-                lastStr = dateStr +
-                    ' <span style="color:var(--muted);font-size:0.7rem">· ' + dAgo + 'd ago</span>';
-            }
+        var last3 = sorted.slice(0, 3);
+        var lastStr;
+        if (!last3.length) {
+            lastStr = '<span style="color:var(--muted)">—</span>';
+        } else {
+            lastStr = last3.map(function(last) {
+                var dAgo = Math.floor((now - new Date(last.rd)) / 86400000);
+                var dateStr = _fmtDate(last.rd);
+                if (last.isOpen) {
+                    return dateStr +
+                        ' <span style="color:var(--muted);font-size:0.68rem">· ' + dAgo + 'd ago</span>' +
+                        ' <span style="color:#f85149;font-size:0.68rem">(open)</span>';
+                } else {
+                    return dateStr +
+                        ' <span style="color:var(--muted);font-size:0.68rem">· ' + dAgo + 'd ago</span>';
+                }
+            }).join('<br>');
         }
         var mCell = thisMonth ? '<strong>' + thisMonth + '</strong>' : '<span style="color:var(--muted)">—</span>';
         var yCell = thisYear  ? thisYear  : '<span style="color:var(--muted)">—</span>';
         return '<tr><td>' + a.label + '</td>' +
                '<td class="tc">' + mCell + '</td>' +
                '<td class="tc">' + yCell + '</td>' +
-               '<td class="tc" style="font-size:0.77rem">' + lastStr + '</td></tr>';
+               '<td style="font-size:0.77rem;line-height:1.6">' + lastStr + '</td></tr>';
     }).join('');
     return '<div style="padding:8px 14px 12px;background:rgba(13,17,23,0.6)">' +
            '<table class="app-tbl">' +
@@ -1784,7 +1794,7 @@ function buildApplianceDetail(propName) {
              '<th>Appliance</th>' +
              '<th class="tc">This Month</th>' +
              '<th class="tc">This Year</th>' +
-             '<th class="tc">Last Raised</th>' +
+             '<th>Last 3 Raised</th>' +
            '</tr></thead>' +
            '<tbody>' + rows + '</tbody></table></div>';
 }
@@ -1799,11 +1809,12 @@ function _renderPropHealthRows(display) {
     tbody.innerHTML = display.map(function(p, i) {
         var pct = Math.round(p.score / maxScore * 100);
         var sc = pct > 65 ? '#f85149' : pct > 35 ? '#f0883e' : '#3fb950';
-        var nm = p.name.length > 38 ? p.name.substring(0, 36) + '...' : p.name;
+        var nm = p.name.length > 32 ? p.name.substring(0, 30) + '...' : p.name;
         var safeKey = p.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        var eirBadge = p.eir ? ' <span style="color:var(--muted);font-size:0.7rem">' + p.eir + '</span>' : '';
         var mainRow = '<tr class="ph-row" data-prop="' + safeKey + '">' +
             '<td style="color:var(--muted);font-size:0.74rem"><i class="ph-expand-icon">&#9658;</i>' + (i + 1) + '</td>' +
-            '<td title="' + safeKey + '">' + nm + '</td>' +
+            '<td title="' + safeKey + (p.eir ? ' (' + p.eir + ')' : '') + '">' + nm + eirBadge + '</td>' +
             '<td style="text-align:center">' + p.count + '</td>' +
             '<td style="text-align:center">' + (p.open ? '<span style="color:#f85149;font-weight:600">' + p.open + '</span>' : '<span style="color:var(--muted)">0</span>') + '</td>' +
             '<td style="text-align:center">' + (p.avgDays ? p.avgDays + 'd' : '-') + '</td>' +
@@ -1811,7 +1822,7 @@ function _renderPropHealthRows(display) {
             '<td style="white-space:nowrap"><span style="color:' + sc + ';font-weight:700;min-width:32px;display:inline-block">' + p.score + '</span>' +
             '<span class="score-bar" style="width:' + pct + 'px;background:' + sc + '33;border:1px solid ' + sc + '55"></span></td>' +
             '</tr>';
-        var detailRow = '<tr class="ph-detail-row"><td colspan="7" style="padding:0">' + buildApplianceDetail(p.name) + '</td></tr>';
+        var detailRow = '<tr class="ph-detail-row"><td colspan="7" style="padding:0">' + buildApplianceDetail(p.name, p.eir) + '</td></tr>';
         return mainRow + detailRow;
     }).join('');
     tbody.removeEventListener('click', tbody._phClick);
@@ -1828,29 +1839,52 @@ function _renderPropHealthRows(display) {
 }
 
 function _applyPropFilter() {
-    var filtered = _propFilter
-        ? _allPropArr.filter(function(p) { return p.name.toLowerCase().indexOf(_propFilter) !== -1; })
+    var q = _propFilter;
+    var filtered = q
+        ? _allPropArr.filter(function(p) {
+            return p.name.toLowerCase().indexOf(q) !== -1 ||
+                   (p.eir && p.eir.toLowerCase().indexOf(q) !== -1);
+          })
         : _allPropArr;
-    var display = (_propShowAll || _propFilter) ? filtered : filtered.slice(0, 15);
+    var display = (_propShowAll || q) ? filtered : filtered.slice(0, 15);
     _renderPropHealthRows(display);
 }
 
 function updatePropertyHealth(data) {
-    var props = {};
-    data.forEach(function(t) {
-        var p = t.prop;
-        if (p === 'Unknown') return;
-        if (!props[p]) props[p] = { name:p, count:0, totalDays:0, daysCnt:0, open:0, hiPri:0 };
-        props[p].count++;
-        if (t.days !== null) { props[p].totalDays += t.days; props[p].daysCnt++; }
-        if (t.isOpen || t.status !== 'Closed') props[p].open++;
-        if (t.priority <= 2) props[p].hiPri++;
+    // Always use RAW so filters don't reduce the property list.
+    // Unique property = Eircode (postcode). Active = ≥1 ticket in last 365 days.
+    var now = new Date();
+    var cutoffMs = now.getTime() - 365 * 24 * 60 * 60 * 1000;
+
+    var byEir = {};
+    RAW.forEach(function(t) {
+        var eir = (t.postcode || '').trim().toUpperCase();
+        if (!eir || eir === 'UNKNOWN') return;
+        if (!byEir[eir]) byEir[eir] = {
+            eir: eir, propCounts: {},
+            count: 0, totalDays: 0, daysCnt: 0, open: 0, hiPri: 0, hasRecent: false
+        };
+        var g = byEir[eir];
+        if (t.prop && t.prop !== 'Unknown') g.propCounts[t.prop] = (g.propCounts[t.prop] || 0) + 1;
+        g.count++;
+        if (t.days !== null) { g.totalDays += t.days; g.daysCnt++; }
+        if (t.isOpen || t.status !== 'Closed') g.open++;
+        if (t.priority <= 2) g.hiPri++;
+        if (t.rd && new Date(t.rd).getTime() >= cutoffMs) g.hasRecent = true;
     });
+
     var arr = [];
-    Object.keys(props).forEach(function(k) { arr.push(props[k]); });
-    arr.forEach(function(p) {
-        p.avgDays = p.daysCnt ? +(p.totalDays / p.daysCnt).toFixed(1) : 0;
-        p.score = Math.round((p.count + (p.avgDays / 10) + (p.open * 4) + (p.hiPri * 2)) * 10) / 10;
+    Object.keys(byEir).forEach(function(eir) {
+        var g = byEir[eir];
+        if (!g.hasRecent) return;
+        // Pick the most-used prop name for this Eircode
+        var names = Object.keys(g.propCounts);
+        g.name = names.length
+            ? names.sort(function(a,b){ return g.propCounts[b] - g.propCounts[a]; })[0]
+            : eir;
+        g.avgDays = g.daysCnt ? +(g.totalDays / g.daysCnt).toFixed(1) : 0;
+        g.score = Math.round((g.count + (g.avgDays / 10) + (g.open * 4) + (g.hiPri * 2)) * 10) / 10;
+        arr.push(g);
     });
     arr.sort(function(a, b) { return b.score - a.score; });
     _allPropArr = arr;
@@ -1861,7 +1895,7 @@ function updatePropertyHealth(data) {
         var ctrl = document.createElement('div');
         ctrl.style.cssText = 'display:flex;gap:8px;margin:8px 0 10px;align-items:center';
         ctrl.innerHTML =
-            '<input id="propSearch" placeholder="Search property…" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:0.82rem;outline:none">' +
+            '<input id="propSearch" placeholder="Search by address or Eircode…" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:0.82rem;outline:none">' +
             '<button id="propShowAllBtn" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;font-size:0.8rem;cursor:pointer;white-space:nowrap">Show all (' + arr.length + ')</button>';
         titleDiv.after(ctrl);
         document.getElementById('propSearch').addEventListener('input', function() {
