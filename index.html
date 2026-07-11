@@ -1742,6 +1742,12 @@ function _fmtDate(rd) {
     return p[2] + '/' + p[1] + '/' + p[0];
 }
 
+function _dAgoStr(dAgo) {
+    if (dAgo <= 90) return dAgo + 'd ago';
+    var m = Math.round(dAgo / 30 * 10) / 10;
+    return m + 'm ago';
+}
+
 // Accepts eircode to filter by unique property (postcode), falls back to propName
 function buildApplianceDetail(propName, eircode) {
     var now = new Date();
@@ -1763,7 +1769,7 @@ function buildApplianceDetail(propName, eircode) {
         var thisMonth = tickets.filter(function(t) { return t.ry === curYear && t.rm === curMonth; }).length;
         var thisYear  = tickets.filter(function(t) { return t.ry === curYear; }).length;
         var sorted = tickets.slice().sort(function(x,y){ return (y.rd||'').localeCompare(x.rd||''); });
-        var last3 = sorted.slice(0, 3);
+        var last3 = sorted.slice(0, 3).reverse(); // oldest → newest
         var lastStr;
         if (!last3.length) {
             lastStr = '<span style="color:var(--muted)">—</span>';
@@ -1771,13 +1777,14 @@ function buildApplianceDetail(propName, eircode) {
             lastStr = last3.map(function(last) {
                 var dAgo = Math.floor((now - new Date(last.rd)) / 86400000);
                 var dateStr = _fmtDate(last.rd);
+                var agoStr = _dAgoStr(dAgo);
                 if (last.isOpen) {
                     return dateStr +
-                        ' <span style="color:var(--muted);font-size:0.68rem">· ' + dAgo + 'd ago</span>' +
+                        ' <span style="color:var(--muted);font-size:0.68rem">· ' + agoStr + '</span>' +
                         ' <span style="color:#f85149;font-size:0.68rem">(open)</span>';
                 } else {
                     return dateStr +
-                        ' <span style="color:var(--muted);font-size:0.68rem">· ' + dAgo + 'd ago</span>';
+                        ' <span style="color:var(--muted);font-size:0.68rem">· ' + agoStr + '</span>';
                 }
             }).join('<br>');
         }
