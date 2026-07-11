@@ -563,6 +563,7 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 .dept-badge[data-dept="Purchasing (Finance)"]{background:rgba(244,67,54,0.13);color:#ef9a9a;border-color:rgba(244,67,54,0.45)}
 .dept-badge[data-dept="Others"]{background:rgba(158,158,158,0.1);color:#bdbdbd;border-color:rgba(158,158,158,0.35)}
 @media(max-width:768px){.dept-badge{padding:2px 7px;font-size:0.65rem}}
+.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);font-size:0.6rem;font-weight:700;cursor:help;margin-left:3px;vertical-align:middle;flex-shrink:0;line-height:1}
 /* Appliance drill-down */
 .ph-row{cursor:pointer;transition:background 0.1s}
 .ph-row:hover{background:rgba(255,255,255,0.03)}
@@ -1058,16 +1059,16 @@ body.filter-closed-only [data-card-type="open"]{display:none}
 
   <div class="charts-row r3" style="margin-bottom:20px">
     <div class="chart-card" style="overflow-x:auto">
-      <div class="chart-title"><span class="dot" style="background:var(--red)"></span>Property Health Score <span style="font-weight:400;color:var(--muted);font-size:0.72rem;text-transform:none;letter-spacing:0">&nbsp;&#8212; top 15 by risk</span></div>
+      <div class="chart-title"><span class="dot" style="background:var(--red)"></span>Property Health Score <span style="font-weight:400;color:var(--muted);font-size:0.72rem;text-transform:none;letter-spacing:0">&nbsp;&#8212; top 15 by risk &nbsp;|&nbsp; use search or &ldquo;Show all&rdquo; to see every active property</span></div>
       <table class="ph-table">
         <thead><tr>
           <th style="width:28px">#</th>
-          <th>Property</th>
-          <th style="text-align:center">Tickets</th>
-          <th style="text-align:center">Open</th>
-          <th style="text-align:center">Avg Days</th>
-          <th style="text-align:center">Hi-Pri</th>
-          <th>Score</th>
+          <th>Property <span class="tip-icon" title="Property address. Eircode shown in grey — used as unique identifier. If ticket count seems low, check that tickets in Fixflo have the Eircode field filled in.">i</span></th>
+          <th style="text-align:center">Tickets <span class="tip-icon" title="Total tickets ever recorded for this property (open + closed, all time). Grouped by Eircode.">i</span></th>
+          <th style="text-align:center">Open <span class="tip-icon" title="Tickets currently open (not yet resolved).">i</span></th>
+          <th style="text-align:center">Avg Days <span class="tip-icon" title="Average number of days it took to resolve closed tickets at this property. Open tickets are not included.">i</span></th>
+          <th style="text-align:center">Hi-Pri <span class="tip-icon" title="Count of tickets with Priority 0, 1 or 2 (highest urgency levels in Fixflo).">i</span></th>
+          <th>Score <span class="tip-icon" title="Risk score = Tickets + (AvgDays ÷ 10) + (Open × 4) + (HiPri × 2). Open tickets are weighted ×4 (active problems). Higher score = property needs more attention.">i</span></th>
         </tr></thead>
         <tbody id="propHealthBody"></tbody>
       </table>
