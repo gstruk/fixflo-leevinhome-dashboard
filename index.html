@@ -1850,10 +1850,17 @@ function _renderPropHealthRows(display) {
 function _applyPropFilter() {
     var q = _propFilter;
     var filtered = q
-        ? _allPropArr.filter(function(p) {
-            return p.name.toLowerCase().indexOf(q) !== -1 ||
-                   (p.eir && p.eir.toLowerCase().indexOf(q) !== -1);
-          })
+        ? (function() {
+            var normQ = q.replace(/\s+/g, ''); // D03F895 matches D03 F895
+            return _allPropArr.filter(function(p) {
+                var nameHit = p.name.toLowerCase().indexOf(q) !== -1;
+                var eirHit  = p.eir && (
+                    p.eir.toLowerCase().indexOf(q) !== -1 ||
+                    p.eir.toLowerCase().replace(/\s+/g,'').indexOf(normQ) !== -1
+                );
+                return nameHit || eirHit;
+            });
+          })()
         : _allPropArr;
     var display = (_propShowAll || q) ? filtered : filtered.slice(0, 15);
     _renderPropHealthRows(display);
