@@ -708,6 +708,16 @@ body.filter-closed-only [data-card-type="open"]{display:none}
       </div>
     </div>
   </label>
+  <label>&#x1F3D9; City
+    <div class="ms-wrap" id="ms-city">
+      <button type="button" class="ms-btn" onclick="msToggle('ms-city')"><span class="ms-label">All Cities</span><span class="ms-arrow">&#9660;</span></button>
+      <div class="ms-drop">
+        <label class="ms-opt"><input type="checkbox" value="dublin"   onchange="applyFilters()"> Dublin</label>
+        <label class="ms-opt"><input type="checkbox" value="cork"     onchange="applyFilters()"> Cork</label>
+        <label class="ms-opt"><input type="checkbox" value="limerick" onchange="applyFilters()"> Limerick</label>
+      </div>
+    </div>
+  </label>
   <div class="quick-range-btns">
     <button class="quick-range-btn" onclick="setQuickRange(30,this)">Last 30 days</button>
     <button class="quick-range-btn" onclick="setQuickRange(90,this)">Last 90 days</button>
@@ -1337,7 +1347,8 @@ function getFilters() {
         statuses:   msGetVals('ms-status'),
         appliances: msGetVals('ms-appliance'),
         teams:      msGetVals('ms-team'),
-        depts:      msGetVals('ms-dept')
+        depts:      msGetVals('ms-dept'),
+        cities:     msGetVals('ms-city')
     };
 }
 
@@ -1368,6 +1379,7 @@ function applyFilters() {
         if (f.appliances.length && f.appliances.indexOf(t.appliance_type || 'other') === -1) return false;
         if (f.teams.length && f.teams.indexOf(t.team || '') === -1) return false;
         if (f.depts.length && f.depts.indexOf(getDeptForTeam(t.team)) === -1) return false;
+        if (f.cities.length && f.cities.indexOf(getCity(t.postcode)) === -1) return false;
         return true;
     });
     var APPLIANCE_LABELS = {washing_machine:'Washing Machine', dryer:'Dryer', hot_water:'Hot Water', hob:'Hob', hoover:'Hoover', fridge:'Fridge', mattress:'Mattress', oven:'Oven', cleaning:'Cleaning', leak:'Leak', cold_water:'Cold Water', other:'Other'};
@@ -1388,6 +1400,7 @@ function applyFilters() {
     msUpdateLabel('ms-appliance', 'All Types', APPLIANCE_LABELS);
     msUpdateLabel('ms-team',      'All Teams');
     msUpdateLabel('ms-dept',      'All Departments');
+    msUpdateLabel('ms-city',      'All Cities', {dublin:'Dublin', cork:'Cork', limerick:'Limerick'});
     // Appliance card highlight sync
     document.querySelectorAll('[data-appliance]').forEach(function(card){
         card.classList.toggle('app-active', f.appliances.indexOf(card.dataset.appliance) !== -1);
@@ -1403,6 +1416,7 @@ function applyFilters() {
     if (f.statuses.length)   parts = parts.concat(f.statuses);
     if (f.appliances.length) parts = parts.concat(f.appliances.map(function(v){ return APPLIANCE_LABELS[v] || v; }));
     if (f.depts.length)      parts = parts.concat(f.depts);
+    if (f.cities.length)     parts = parts.concat(f.cities.map(function(v){ return ({dublin:'Dublin',cork:'Cork',limerick:'Limerick'})[v]||v; }));
     if (parts.length) { tag.textContent = parts.join(' · '); tag.style.display = ''; }
     else              { tag.style.display = 'none'; }
     updateStats();
@@ -1445,7 +1459,7 @@ function setDensity(mode) {
 function resetFilters() {
     quickRange = null;
     document.querySelectorAll('.quick-range-btn').forEach(function(b){ b.classList.remove('qr-active'); });
-    ['ms-year','ms-month','ms-open','ms-status','ms-appliance','ms-team','ms-dept'].forEach(function(id) {
+    ['ms-year','ms-month','ms-open','ms-status','ms-appliance','ms-team','ms-dept','ms-city'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.querySelectorAll('input').forEach(function(c){ c.checked = false; });
     });
