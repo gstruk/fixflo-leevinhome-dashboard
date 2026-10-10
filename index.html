@@ -2863,29 +2863,31 @@ function updateCityApplianceChart() {
                     var cnt = c.dataset.counts[c.dataIndex];
                     var avg = c.parsed.y;
                     if (avg === null) return ' ' + c.dataset.label + ': no data';
-                    return ' ' + c.dataset.label + ': ' + avg + ' days  (' + cnt + ' ticket' + (cnt !== 1 ? 's' : ') + ')';
+                    return ' ' + c.dataset.label + ': ' + avg + ' days  (' + cnt + ' ticket' + (cnt !== 1 ? 's' : '') + ')';
                 }}},
-                datalabels: [
-                    {
-                        anchor: 'end', align: 'end',
-                        formatter: function(v) { return v !== null ? v + 'd' : ''; },
-                        color: '#cdd9e5', font: { size: 10, weight: 'bold' },
-                        display: function(ctx) { return ctx.dataset.data[ctx.dataIndex] !== null; }
-                    },
-                    {
-                        anchor: 'center', align: 'center',
-                        formatter: function(v, ctx) {
-                            var cnt = ctx.dataset.counts[ctx.dataIndex];
-                            return cnt > 0 ? cnt + (cnt === 1 ? ' tkt' : ' tkts') : '';
+                datalabels: {
+                    labels: {
+                        avg: {
+                            anchor: 'end', align: 'end',
+                            formatter: function(v) { return v !== null ? v + 'd' : ''; },
+                            color: '#cdd9e5', font: { size: 10, weight: 'bold' },
+                            display: function(ctx) { return ctx.dataset.data[ctx.dataIndex] !== null; }
                         },
-                        color: 'rgba(255,255,255,0.85)', font: { size: 9, weight: '600' },
-                        display: function(ctx) {
-                            var cnt = ctx.dataset.counts[ctx.dataIndex];
-                            var avg = ctx.dataset.data[ctx.dataIndex];
-                            return cnt > 0 && avg !== null && avg >= 2;
+                        count: {
+                            anchor: 'center', align: 'center',
+                            formatter: function(v, ctx) {
+                                var cnt = ctx.dataset.counts[ctx.dataIndex];
+                                return cnt > 0 ? cnt + (cnt === 1 ? ' tkt' : ' tkts') : '';
+                            },
+                            color: 'rgba(255,255,255,0.85)', font: { size: 9, weight: '600' },
+                            display: function(ctx) {
+                                var cnt = ctx.dataset.counts[ctx.dataIndex];
+                                var avg = ctx.dataset.data[ctx.dataIndex];
+                                return cnt > 0 && avg !== null && avg >= 2;
+                            }
                         }
                     }
-                ]
+                }
             },
             scales: {
                 x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e' } },
