@@ -2773,7 +2773,7 @@ var APPLIANCE_LABELS_CITY = {
 };
 
 function cityAvgDaysByAppliance(data) {
-    // Returns { appliance: { dublin: avg|null, cork: avg|null, limerick: avg|null } }
+    // Returns { appliance: { dublin: {avg,n}, cork: {avg,n}, limerick: {avg,n} } }
     var bucket = {};
     data.forEach(function(t) {
         if (t.isOpen || t.days === null || t.days === undefined) return;
@@ -2789,7 +2789,7 @@ function cityAvgDaysByAppliance(data) {
         result[app] = {};
         ['dublin','cork','limerick'].forEach(function(c) {
             var b = bucket[app][c];
-            result[app][c] = b.n ? +(b.s / b.n).toFixed(1) : null;
+            result[app][c] = b.n ? { avg: +(b.s / b.n).toFixed(1), n: b.n } : null;
         });
     });
     return result;
@@ -2833,14 +2833,17 @@ function updateCityApplianceChart() {
     var byApp = cityAvgDaysByAppliance(filteredData);
     var appOrder = ['hot_water','washing_machine','dryer','hob','hoover','fridge','mattress','oven','cleaning','leak','cold_water','other'];
     var apps = appOrder.filter(function(a) {
-        return byApp[a] && (byApp[a].dublin !== null || byApp[a].cork !== null || byApp[a].limerick !== null);
+        return byApp[a] && (['dublin','cork','limerick'].some(function(c){ return byApp[a][c] !== null; }));
     });
     if (!apps.length) return;
     var labels = apps.map(function(a) { return APPLIANCE_LABELS_CITY[a] || a; });
     var datasets = ['dublin','cork','limerick'].map(function(city) {
+        var avgs   = apps.map(function(a) { return byApp[a][city] ? byApp[a][city].avg : null; });
+        var counts = apps.map(function(a) { return byApp[a][city] ? byApp[a][city].n   : 0;    });
         return {
             label: CITY_LABELS[city],
-            data: apps.map(function(a) { return byApp[a][city]; }),
+            data: avgs,
+            counts: counts,
             backgroundColor: CITY_COLORS[city].bg,
             borderColor: CITY_COLORS[city].border,
             borderWidth: 1,
@@ -2849,14 +2852,40 @@ function updateCityApplianceChart() {
     });
     charts['cCityAppliance'] = new Chart(document.getElementById('cCityAppliance'), {
         type: 'bar',
+        plugins: [ChartDataLabels],
         data: { labels: labels, datasets: datasets },
         options: {
             responsive: true, maintainAspectRatio: false,
+            layout: { padding: { top: 24 } },
             plugins: {
                 legend: { position: 'top', labels: { color: '#cdd9e5', font: { size: 11 } } },
                 tooltip: { callbacks: { label: function(c) {
-                    return ' ' + c.dataset.label + ': ' + (c.parsed.y !== null ? c.parsed.y + ' days' : 'no data');
-                }}}
+                    var cnt = c.dataset.counts[c.dataIndex];
+                    var avg = c.parsed.y;
+                    if (avg === null) return ' ' + c.dataset.label + ': no data';
+                    return ' ' + c.dataset.label + ': ' + avg + ' days  (' + cnt + ' ticket' + (cnt !== 1 ? 's' : ') + ')';
+                }}},
+                datalabels: [
+                    {
+                        anchor: 'end', align: 'end',
+                        formatter: function(v) { return v !== null ? v + 'd' : ''; },
+                        color: '#cdd9e5', font: { size: 10, weight: 'bold' },
+                        display: function(ctx) { return ctx.dataset.data[ctx.dataIndex] !== null; }
+                    },
+                    {
+                        anchor: 'center', align: 'center',
+                        formatter: function(v, ctx) {
+                            var cnt = ctx.dataset.counts[ctx.dataIndex];
+                            return cnt > 0 ? cnt + (cnt === 1 ? ' tkt' : ' tkts') : '';
+                        },
+                        color: 'rgba(255,255,255,0.85)', font: { size: 9, weight: '600' },
+                        display: function(ctx) {
+                            var cnt = ctx.dataset.counts[ctx.dataIndex];
+                            var avg = ctx.dataset.data[ctx.dataIndex];
+                            return cnt > 0 && avg !== null && avg >= 2;
+                        }
+                    }
+                ]
             },
             scales: {
                 x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e' } },
