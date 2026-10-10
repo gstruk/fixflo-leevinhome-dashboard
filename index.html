@@ -1126,6 +1126,38 @@ body.filter-closed-only [data-card-type="open"]{display:none}
     </div>
   </div>
 
+  <div class="section-header">
+    <span class="section-header-icon">🏙️</span>
+    <span class="section-header-text">City Comparison — Resolution Time</span>
+    <div class="section-header-line"></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card" style="grid-column:1/-1">
+      <div class="chart-title"><span class="dot" style="background:#58a6ff"></span>Avg Days to Close &mdash; by Appliance &amp; City</div>
+      <div class="chart-wrap" style="min-height:320px"><canvas id="cCityAppliance"></canvas></div>
+    </div>
+    <div class="chart-card" style="grid-column:1/-1">
+      <div class="chart-title" style="display:flex;align-items:center;gap:10px">
+        <span><span class="dot" style="background:#3fb950"></span>Avg Days to Close by Month &mdash; City Comparison</span>
+        <select id="cityLineSelect" onchange="updateCityLineChart()" style="margin-left:auto;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:0.8rem;cursor:pointer">
+          <option value="all">All Appliances</option>
+          <option value="hot_water">Hot Water</option>
+          <option value="washing_machine">Washing Machine</option>
+          <option value="dryer">Dryer</option>
+          <option value="hob">Hob</option>
+          <option value="hoover">Hoover</option>
+          <option value="fridge">Fridge</option>
+          <option value="mattress">Mattress</option>
+          <option value="oven">Oven</option>
+          <option value="cleaning">Cleaning</option>
+          <option value="leak">Leak</option>
+          <option value="cold_water">Cold Water</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="chart-wrap" style="min-height:300px"><canvas id="cCityLine"></canvas></div>
+    </div>
+  </div>
 </main>
 <footer>Leevin Home &middot; Fixflo Dashboard &middot; 2026-10-10 11:42:59</footer>
 </div><!-- /dashboard-wrap -->
@@ -1939,6 +1971,9 @@ function updateSla(data) {
             }
         }
     });
+
+    updateCityApplianceChart();
+    updateCityLineChart();
 }
 
 // -- Avg Days with Team — by Department --
@@ -2723,6 +2758,153 @@ function signOut() {
         if (stored) { _showDashboard(JSON.parse(stored)); }
     } catch(e) {}
 })();
+
+// ── City Comparison helpers ──────────────────────────────────────────────────
+var CITY_COLORS = {
+    dublin:   { bg: 'rgba(88,166,255,0.8)',  border: '#58a6ff' },
+    cork:     { bg: 'rgba(63,185,80,0.8)',   border: '#3fb950' },
+    limerick: { bg: 'rgba(210,153,34,0.8)',  border: '#d2991e' }
+};
+var CITY_LABELS = { dublin: 'Dublin', cork: 'Cork', limerick: 'Limerick' };
+var APPLIANCE_LABELS_CITY = {
+    hot_water:'Hot Water', washing_machine:'Washing Machine', dryer:'Dryer',
+    hob:'Hob', hoover:'Hoover', fridge:'Fridge', mattress:'Mattress', oven:'Oven',
+    cleaning:'Cleaning', leak:'Leak', cold_water:'Cold Water', other:'Other'
+};
+
+function cityAvgDaysByAppliance(data) {
+    // Returns { appliance: { dublin: avg|null, cork: avg|null, limerick: avg|null } }
+    var bucket = {};
+    data.forEach(function(t) {
+        if (t.isOpen || t.days === null || t.days === undefined) return;
+        var city = getCity(t.postcode);
+        if (!city) return;
+        var app = t.appliance_type || 'other';
+        if (!bucket[app]) bucket[app] = { dublin:{s:0,n:0}, cork:{s:0,n:0}, limerick:{s:0,n:0} };
+        bucket[app][city].s += t.days;
+        bucket[app][city].n++;
+    });
+    var result = {};
+    Object.keys(bucket).forEach(function(app) {
+        result[app] = {};
+        ['dublin','cork','limerick'].forEach(function(c) {
+            var b = bucket[app][c];
+            result[app][c] = b.n ? +(b.s / b.n).toFixed(1) : null;
+        });
+    });
+    return result;
+}
+
+function cityAvgDaysByMonth(data, applianceFilter) {
+    // Returns { dublin: {yrmo: avg}, cork: {...}, limerick: {...} }
+    var bucket = { dublin:{}, cork:{}, limerick:{} };
+    data.forEach(function(t) {
+        if (t.isOpen || t.days === null || t.days === undefined) return;
+        if (applianceFilter && applianceFilter !== 'all' && t.appliance_type !== applianceFilter) return;
+        var city = getCity(t.postcode);
+        if (!city) return;
+        var k = t.ry + '-' + (t.rm < 10 ? '0' : '') + t.rm;
+        if (!bucket[city][k]) bucket[city][k] = {s:0, n:0};
+        bucket[city][k].s += t.days;
+        bucket[city][k].n++;
+    });
+    // Union of all months across cities
+    var allKeys = {};
+    ['dublin','cork','limerick'].forEach(function(c) {
+        Object.keys(bucket[c]).forEach(function(k){ allKeys[k] = true; });
+    });
+    var keys = Object.keys(allKeys).sort();
+    var labels = keys.map(function(k) {
+        var p = k.split('-');
+        return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1]-1] + " '" + p[0].slice(2);
+    });
+    var series = {};
+    ['dublin','cork','limerick'].forEach(function(c) {
+        series[c] = keys.map(function(k) {
+            var b = bucket[c][k];
+            return b && b.n ? +(b.s / b.n).toFixed(1) : null;
+        });
+    });
+    return { labels: labels, series: series };
+}
+
+function updateCityApplianceChart() {
+    destroyChart('cCityAppliance');
+    var byApp = cityAvgDaysByAppliance(filteredData);
+    var appOrder = ['hot_water','washing_machine','dryer','hob','hoover','fridge','mattress','oven','cleaning','leak','cold_water','other'];
+    var apps = appOrder.filter(function(a) {
+        return byApp[a] && (byApp[a].dublin !== null || byApp[a].cork !== null || byApp[a].limerick !== null);
+    });
+    if (!apps.length) return;
+    var labels = apps.map(function(a) { return APPLIANCE_LABELS_CITY[a] || a; });
+    var datasets = ['dublin','cork','limerick'].map(function(city) {
+        return {
+            label: CITY_LABELS[city],
+            data: apps.map(function(a) { return byApp[a][city]; }),
+            backgroundColor: CITY_COLORS[city].bg,
+            borderColor: CITY_COLORS[city].border,
+            borderWidth: 1,
+            borderRadius: 4
+        };
+    });
+    charts['cCityAppliance'] = new Chart(document.getElementById('cCityAppliance'), {
+        type: 'bar',
+        data: { labels: labels, datasets: datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { color: '#cdd9e5', font: { size: 11 } } },
+                tooltip: { callbacks: { label: function(c) {
+                    return ' ' + c.dataset.label + ': ' + (c.parsed.y !== null ? c.parsed.y + ' days' : 'no data');
+                }}}
+            },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e' } },
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', callback: function(v) { return v + 'd'; } },
+                    title: { display: true, text: 'Avg Days to Close', color: '#8b949e', font: { size: 11 } } }
+            }
+        }
+    });
+}
+
+function updateCityLineChart() {
+    destroyChart('cCityLine');
+    var sel = document.getElementById('cityLineSelect');
+    var appFilter = sel ? sel.value : 'all';
+    var d = cityAvgDaysByMonth(filteredData, appFilter);
+    if (!d.labels.length) return;
+    var datasets = ['dublin','cork','limerick'].map(function(city) {
+        return {
+            label: CITY_LABELS[city],
+            data: d.series[city],
+            borderColor: CITY_COLORS[city].border,
+            backgroundColor: CITY_COLORS[city].border.replace(')', ', 0.1)').replace('rgb', 'rgba'),
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            tension: 0.3,
+            spanGaps: true
+        };
+    });
+    charts['cCityLine'] = new Chart(document.getElementById('cCityLine'), {
+        type: 'line',
+        data: { labels: d.labels, datasets: datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { color: '#cdd9e5', font: { size: 11 } } },
+                tooltip: { callbacks: { label: function(c) {
+                    return ' ' + c.dataset.label + ': ' + (c.parsed.y !== null ? c.parsed.y + ' days' : 'no data');
+                }}}
+            },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e' } },
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', callback: function(v) { return v + 'd'; } },
+                    title: { display: true, text: 'Avg Days to Close', color: '#8b949e', font: { size: 11 } } }
+            }
+        }
+    });
+}
 </script>
 </body>
 </html>
