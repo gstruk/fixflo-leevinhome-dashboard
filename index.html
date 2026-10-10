@@ -2819,13 +2819,18 @@ function cityAvgDaysByMonth(data, applianceFilter) {
         return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1]-1] + " '" + p[0].slice(2);
     });
     var series = {};
+    var counts = {};
     ['dublin','cork','limerick'].forEach(function(c) {
         series[c] = keys.map(function(k) {
             var b = bucket[c][k];
             return b && b.n ? +(b.s / b.n).toFixed(1) : null;
         });
+        counts[c] = keys.map(function(k) {
+            var b = bucket[c][k];
+            return b ? b.n : 0;
+        });
     });
-    return { labels: labels, series: series };
+    return { labels: labels, series: series, counts: counts };
 }
 
 function updateCityApplianceChart() {
@@ -2879,7 +2884,7 @@ function updateCityApplianceChart() {
                                 var cnt = ctx.dataset.counts[ctx.dataIndex];
                                 return cnt > 0 ? cnt + (cnt === 1 ? ' tkt' : ' tkts') : '';
                             },
-                            color: 'rgba(255,255,255,0.85)', font: { size: 9, weight: '600' },
+                            color: 'rgba(0,0,0,0.85)', font: { size: 9, weight: '600' },
                             display: function(ctx) {
                                 var cnt = ctx.dataset.counts[ctx.dataIndex];
                                 var avg = ctx.dataset.data[ctx.dataIndex];
@@ -2908,6 +2913,7 @@ function updateCityLineChart() {
         return {
             label: CITY_LABELS[city],
             data: d.series[city],
+            counts: d.counts[city],
             borderColor: CITY_COLORS[city].border,
             backgroundColor: CITY_COLORS[city].border.replace(')', ', 0.1)').replace('rgb', 'rgba'),
             borderWidth: 2,
@@ -2925,7 +2931,10 @@ function updateCityLineChart() {
             plugins: {
                 legend: { position: 'top', labels: { color: '#cdd9e5', font: { size: 11 } } },
                 tooltip: { callbacks: { label: function(c) {
-                    return ' ' + c.dataset.label + ': ' + (c.parsed.y !== null ? c.parsed.y + ' days' : 'no data');
+                    var cnt = c.dataset.counts ? c.dataset.counts[c.dataIndex] : 0;
+                    var days = c.parsed.y !== null ? c.parsed.y + ' days' : 'no data';
+                    var suffix = cnt ? ' (' + cnt + ' ticket' + (cnt !== 1 ? 's' : '') + ')' : '';
+                    return ' ' + c.dataset.label + ': ' + days + suffix;
                 }}}
             },
             scales: {
