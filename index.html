@@ -2841,7 +2841,14 @@ function updateCityApplianceChart() {
         return byApp[a] && (['dublin','cork','limerick'].some(function(c){ return byApp[a][c] !== null; }));
     });
     if (!apps.length) return;
-    var labels = apps.map(function(a) { return APPLIANCE_LABELS_CITY[a] || a; });
+    var totals = apps.map(function(a) {
+        return ['dublin','cork','limerick'].reduce(function(s, c) {
+            return s + (byApp[a][c] ? byApp[a][c].n : 0);
+        }, 0);
+    });
+    var labels = apps.map(function(a, i) {
+        return [APPLIANCE_LABELS_CITY[a] || a, '(' + totals[i] + ' tkts)'];
+    });
     var datasets = ['dublin','cork','limerick'].map(function(city) {
         var avgs   = apps.map(function(a) { return byApp[a][city] ? byApp[a][city].avg : null; });
         var counts = apps.map(function(a) { return byApp[a][city] ? byApp[a][city].n   : 0;    });
@@ -2895,7 +2902,7 @@ function updateCityApplianceChart() {
                 }
             },
             scales: {
-                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e' } },
+                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, maxRotation: 0 } },
                 y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', callback: function(v) { return v + 'd'; } },
                     title: { display: true, text: 'Avg Days to Close', color: '#8b949e', font: { size: 11 } } }
             }
@@ -2938,7 +2945,7 @@ function updateCityLineChart() {
                 }}}
             },
             scales: {
-                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e' } },
+                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, maxRotation: 0 } },
                 y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', callback: function(v) { return v + 'd'; } },
                     title: { display: true, text: 'Avg Days to Close', color: '#8b949e', font: { size: 11 } } }
             }
