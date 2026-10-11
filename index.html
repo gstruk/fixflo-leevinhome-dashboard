@@ -1990,7 +1990,7 @@ var DWT_DEPT_ORDER = ['CX Team','Facilities Team','Commercial Team','Property Ma
 function updateTeamDwt(data) {
     var teamData = {};
     data.forEach(function(t) {
-        if (!t.isOpen || !t.team) return;
+        if (!t.team) return;
         var d = dwtDays(t);
         if (d === null) return;
         if (!teamData[t.team]) teamData[t.team] = { count: 0, totalDays: 0 };
@@ -2038,7 +2038,7 @@ function updateTeamDwt(data) {
         hdr.innerHTML =
             '<div class="dwt-dept-colorbar" style="background:' + color + '"></div>' +
             '<div class="dwt-dept-name">' + dept + '</div>' +
-            '<div class="dwt-dept-meta">' + dd.count + ' open</div>' +
+            '<div class="dwt-dept-meta">' + dd.count + ' tickets</div>' +
             '<div class="dwt-dept-avg" style="color:' + color + '">' + dd.avg + 'd</div>' +
             '<div class="dwt-dept-chevron">&#x25BC;</div>';
         hdr.addEventListener('click', function() {
