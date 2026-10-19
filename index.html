@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1554,8 +1554,9 @@ function updateStats() {
     var ob = document.getElementById('overdue-badge');
     if (ob) {
         if (overdue > 0) {
+            var overdPct = openT > 0 ? (overdue / openT * 100).toFixed(1) : '0.0';
             ob.style.display = 'flex';
-            ob.innerHTML = '<span class="overdue-badge-dot"></span>' + overdue + ' overdue (>14d)';
+            ob.innerHTML = '<span class="overdue-badge-dot"></span>' + overdue + ' overdue (>14d) · ' + overdPct + '%';
         } else {
             ob.style.display = 'none';
         }
