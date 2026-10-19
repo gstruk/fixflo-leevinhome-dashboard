@@ -1556,7 +1556,11 @@ function updateStats() {
         if (overdue > 0) {
             var overdPct = openT > 0 ? (overdue / openT * 100).toFixed(1) : '0.0';
             ob.style.display = 'flex';
-            ob.innerHTML = '<span class="overdue-badge-dot"></span>' + overdue + ' overdue (>14d) · ' + overdPct + '%';
+            ob.style.flexDirection = 'column';
+            ob.style.alignItems = 'center';
+            ob.style.gap = '2px';
+            ob.innerHTML = '<div style="display:flex;align-items:center;gap:6px"><span class="overdue-badge-dot"></span>' + overdue + ' overdue (>14d) · ' + overdPct + '%</div>'
+                         + '<div style="font-size:0.70rem;font-weight:500;color:#3fb950;letter-spacing:0.2px">&#x25CB; Target 20%</div>';
         } else {
             ob.style.display = 'none';
         }
